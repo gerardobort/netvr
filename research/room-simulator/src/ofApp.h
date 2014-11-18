@@ -17,7 +17,7 @@ class ofApp : public ofBaseApp{
         void draw();
         void exit();
 
-	    void drawView(ofEasyCam* camera, int x, int y, int w, int h);
+	    void drawView(ofCamera* camera, int x, int y, int w, int h);
 	    void drawScene();
 
         void keyPressed(int key);
@@ -30,5 +30,5 @@ class ofApp : public ofBaseApp{
         void dragEvent(ofDragInfo dragInfo);
         void gotMessage(ofMessage msg);
         
-        ofEasyCam cameras[NUM_CAMERAS];
+        ofCamera cameras[NUM_CAMERAS];
 };

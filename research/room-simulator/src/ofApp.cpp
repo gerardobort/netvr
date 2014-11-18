@@ -9,7 +9,12 @@ void ofApp::setup(){
 
     for (int i = 0; i < NUM_CAMERAS; i++) {
         cameras[i].setGlobalPosition(ofVec3f(ROOM_W/2 + i*(1000/NUM_CAMERAS) - 1000/2, ROOM_H*2, ROOM_D*4));
-        cameras[i].setTarget(ofVec3f(ROOM_W/2, 0, ROOM_D/2));
+        //cameras[i].setTarget(ofVec3f(ROOM_W/2, 0, ROOM_D/2));
+        ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, 0, ROOM_D/2);
+        cameras[i].setFov(60.0);
+        cameras[i].setNearClip(400.0);
+        cameras[i].setFarClip(1200.0);
+        cameras[i].setOrientation(orientation.getNormalized());
     }
 }
 
@@ -44,7 +49,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
+void ofApp::drawView(ofCamera* camera, int x, int y, int w, int h) {
     ofFbo fbo;
     fbo.allocate(w, h);
     fbo.begin();
@@ -99,13 +104,13 @@ void ofApp::drawScene() {
 void ofApp::keyPressed(int key){
 	switch (key) {
 		case OF_KEY_LEFT:
-            for (int i = 0; i < NUM_CAMERAS; i++)
-                cameras[i].setDistance(cameras[i].getDistance() + 20);
+            //for (int i = 0; i < NUM_CAMERAS; i++)
+            //    cameras[i].setDistance(cameras[i].getDistance() + 20);
 			break;
 
 		case OF_KEY_RIGHT:
-            for (int i = 0; i < NUM_CAMERAS; i++)
-                cameras[i].setDistance(cameras[i].getDistance() - 20);
+            //for (int i = 0; i < NUM_CAMERAS; i++)
+            //    cameras[i].setDistance(cameras[i].getDistance() - 20);
 			break;
 	}
 }
