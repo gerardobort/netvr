@@ -74,7 +74,7 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
                 pixels2[i +1] = color.g;
                 pixels2[i +2] = color.b;
                 pixels2[i +3] = color.a;
-                ofVec3f worldCoord = camera->worldToScreen(ofVec3f(u, v, 0), ofRectangle(x, y, w, h));
+                ofVec3f worldCoord = camera->worldToScreen(ofVec3f(u, v, 0) /*, ofRectangle(x, y, w, h)*/);
                 mesh.addColor(color);
                 mesh.addVertex(worldCoord);
             } else {
