@@ -9,11 +9,7 @@ void ofApp::setup(){
 
     for (int i = 0; i < NUM_CAMERAS; i++) {
         cameras[i].setGlobalPosition(ofVec3f(ROOM_W/2 + i*(600/NUM_CAMERAS) - 600/2, ROOM_H*2, ROOM_D*3));
-        //cameras[i].setTarget(ofVec3f(ROOM_W/2, 0, ROOM_D/2));
         ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, ROOM_H/2, ROOM_D/2);
-        //cameras[i].setFov(60.0);
-        //cameras[i].setNearClip(200.0);
-        //cameras[i].setFarClip(800.0);
         cameras[i].setOrientation(orientation.getNormalized());
     }
 }
@@ -49,7 +45,7 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::drawView(ofCamera* camera, int x, int y, int w, int h) {
+void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
     ofFbo fbo;
     fbo.allocate(w, h);
     fbo.begin();
@@ -60,26 +56,45 @@ void ofApp::drawView(ofCamera* camera, int x, int y, int w, int h) {
     fbo.end();
     fbo.draw(x, y, w, h);
 
-    //ofMatrix4x4 inverseMatrix = camera->getProjectionMatrix().getInverse();
-    ofMatrix4x4 inverseMatrix = camera->getModelViewProjectionMatrix().getInverse();
-    ofMatrix4x4 testMatrix = ofMatrix4x4(
-       1.0,     0,      0,    0.001,  
-         0,   1.0,      0,    0.001,  
-         0,     0,    1.0,      0,  
-         0,     0,      0,    1.0);
-    ofTexture map = fbo.getTextureReference(0);
+    ofTexture map1 = fbo.getTextureReference(0);
+    ofTexture map2;
+    ofPixels pixels1;
+    unsigned char pixels2[w*h*4];
+    map1.readToPixels(pixels1);
+    map2.allocate(w, h, GL_RGBA);
     ofFbo fboi;
+    ofMesh mesh;
 
-    fboi.allocate(2*w, 2*h);
+    for (int u = 0; u < w; u++)
+        for (int v = 0; v < h; v++) {
+            int i = 4*(v*w + u);
+            ofColor color = ofColor(pixels1[i +0], pixels1[i +1], pixels1[i +2], 255);
+            if (color.g != 255) {
+                pixels2[i +0] = color.r;
+                pixels2[i +1] = color.g;
+                pixels2[i +2] = color.b;
+                pixels2[i +3] = color.a;
+                ofVec3f worldCoord = camera->worldToScreen(ofVec3f(u, v, 0), ofRectangle(x, y, w, h));
+                mesh.addColor(color);
+                mesh.addVertex(worldCoord);
+            } else {
+                pixels2[i +0] = 255;
+                pixels2[i +1] = 0;
+                pixels2[i +2] = 0;
+                pixels2[i +3] = 255;
+            }
+        }
+
+    fboi.allocate(w, h);
     fboi.begin();
         ofBackground(ofColor(0, 0, 0, 0));
-        ofMultMatrix(inverseMatrix);
-        //ofMultMatrix(testMatrix);
-        //ofPushMatrix();
-            map.draw(0, 0, w, h);
-        //ofPopMatrix();
+        map2.loadData(pixels2, w, h, GL_RGBA);
+        map2.draw(0, 0, w, h);
     fboi.end();
-    fboi.draw(x, y+h+10, 2*w, 2*h);
+    fboi.draw(x, y+h+10, w, h);
+
+    glPointSize(4);
+    mesh.drawVertices();
 }
 
 //--------------------------------------------------------------
