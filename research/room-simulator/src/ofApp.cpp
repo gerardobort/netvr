@@ -8,12 +8,12 @@ void ofApp::setup(){
     ofSetFrameRate(60);
 
     for (int i = 0; i < NUM_CAMERAS; i++) {
-        cameras[i].setGlobalPosition(ofVec3f(ROOM_W/2 + i*(1000/NUM_CAMERAS) - 1000/2, ROOM_H*2, ROOM_D*4));
+        cameras[i].setGlobalPosition(ofVec3f(ROOM_W/2 + i*(600/NUM_CAMERAS) - 600/2, ROOM_H*2, ROOM_D*3));
         //cameras[i].setTarget(ofVec3f(ROOM_W/2, 0, ROOM_D/2));
-        ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, 0, ROOM_D/2);
-        cameras[i].setFov(60.0);
-        cameras[i].setNearClip(400.0);
-        cameras[i].setFarClip(1200.0);
+        ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, ROOM_H/2, ROOM_D/2);
+        //cameras[i].setFov(60.0);
+        //cameras[i].setNearClip(200.0);
+        //cameras[i].setFarClip(800.0);
         cameras[i].setOrientation(orientation.getNormalized());
     }
 }
@@ -53,12 +53,33 @@ void ofApp::drawView(ofCamera* camera, int x, int y, int w, int h) {
     ofFbo fbo;
     fbo.allocate(w, h);
     fbo.begin();
-        ofBackground(ofColor(0, 0, 0, 160));
+        ofBackground(ofColor(0, 255, 0, 160));
         camera->begin();
             drawScene();
         camera->end();
     fbo.end();
     fbo.draw(x, y, w, h);
+
+    //ofMatrix4x4 inverseMatrix = camera->getProjectionMatrix().getInverse();
+    ofMatrix4x4 inverseMatrix = camera->getModelViewProjectionMatrix().getInverse();
+    ofMatrix4x4 testMatrix = ofMatrix4x4(
+       1.0,     0,      0,    0.001,  
+         0,   1.0,      0,    0.001,  
+         0,     0,    1.0,      0,  
+         0,     0,      0,    1.0);
+    ofTexture map = fbo.getTextureReference(0);
+    ofFbo fboi;
+
+    fboi.allocate(2*w, 2*h);
+    fboi.begin();
+        ofBackground(ofColor(0, 0, 0, 0));
+        ofMultMatrix(inverseMatrix);
+        //ofMultMatrix(testMatrix);
+        //ofPushMatrix();
+            map.draw(0, 0, w, h);
+        //ofPopMatrix();
+    fboi.end();
+    fboi.draw(x, y+h+10, 2*w, 2*h);
 }
 
 //--------------------------------------------------------------
