@@ -9,8 +9,9 @@ void ofApp::setup(){
 
     for (int i = 0; i < NUM_CAMERAS; i++) {
         cameras[i].setGlobalPosition(ofVec3f(ROOM_W/2 + i*(600/NUM_CAMERAS) - 600/2, ROOM_H*2, ROOM_D*3));
-        ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, ROOM_H/2, ROOM_D/2);
-        cameras[i].setOrientation(orientation.getNormalized());
+        //ofVec3f orientation = cameras[i].getGlobalPosition() - ofVec3f(ROOM_W/2, ROOM_H/2, ROOM_D/2);
+        //cameras[i].setOrientation(orientation.getNormalized());
+        cameras[i].setTarget(ofVec3f(ROOM_W/2, 0, ROOM_D/2));
     }
 }
 
@@ -74,14 +75,17 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
                 pixels2[i +1] = color.g;
                 pixels2[i +2] = color.b;
                 pixels2[i +3] = color.a;
-                ofVec3f worldCoord = camera->worldToScreen(ofVec3f(u, v, 0) /*, ofRectangle(x, y, w, h)*/);
+                ofVec3f worldCoord = camera->screenToWorld(ofVec3f(u, v, 0), ofRectangle(0, 0, w, h));
+                worldCoord = camera->worldToCamera(worldCoord, ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight()));
+                worldCoord = camera->cameraToWorld(worldCoord, ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight()));
+                if (x == 0) color.r = 0; else color.g = 0;
                 mesh.addColor(color);
                 mesh.addVertex(worldCoord);
             } else {
                 pixels2[i +0] = 255;
                 pixels2[i +1] = 0;
                 pixels2[i +2] = 0;
-                pixels2[i +3] = 255;
+                pixels2[i +3] = 100;
             }
         }
 
@@ -91,10 +95,12 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
         map2.loadData(pixels2, w, h, GL_RGBA);
         map2.draw(0, 0, w, h);
     fboi.end();
-    fboi.draw(x, y+h+10, w, h);
+    fboi.draw(x, y+h+1, w, h);
 
-    glPointSize(4);
-    mesh.drawVertices();
+    camera->begin();
+        glPointSize(1);
+        mesh.drawVertices();
+    camera->end();
 }
 
 //--------------------------------------------------------------

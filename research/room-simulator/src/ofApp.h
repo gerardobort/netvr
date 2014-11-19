@@ -4,7 +4,7 @@
 #include "ofGLProgrammableRenderer.h"
 
 #define M_PI 3.1415926535897932384626433832795
-#define NUM_CAMERAS 1
+#define NUM_CAMERAS 2
 #define ROOM_W 300
 #define ROOM_H 100
 #define ROOM_D 200
