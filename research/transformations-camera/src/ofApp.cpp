@@ -31,6 +31,7 @@ void ofApp::draw(){
 
     int w = image.width/2.0;
     int h = image.height/2.0;
+    int p = 10;
 
     ofPixels pixels1 = image.getPixelsRef();
     unsigned char pixels2[w*h*3];
@@ -68,7 +69,7 @@ void ofApp::draw(){
         reportStream << "original" << endl;
 	    ofDrawBitmapString(reportStream.str(), 20, 20);
     fbo1.end();
-    fbo1.draw(0, 0, w, h);
+    fbo1.draw(p, p, w, h);
 
     ofFbo fbo2;
     fbo2.allocate(w, h);
@@ -82,24 +83,41 @@ void ofApp::draw(){
         reportStream << "camera view transformation" << endl;
 	    ofDrawBitmapString(reportStream.str(), 20, 20);
     fbo2.end();
-    fbo2.draw(w, 0, w, h);
+    fbo2.draw(w + 2*p, p, w, h);
 
 
     ofFbo fbo3;
     fbo3.allocate(w, h);
     fbo3.begin();
         ofBackground(ofColor(0, 0, 0, 0));
-        ofMatrix4x4 m = camera.getModelViewMatrix();
+        ofMatrix4x4 m1 = camera.getModelViewMatrix();
         ofPushMatrix();
-        ofLoadMatrix(m);
-        image.draw(0, 0);
+            ofLoadMatrix(m1);
+            image.draw(0, 0);
         ofPopMatrix();
 
         reportStream.str(""); reportStream.clear();
         reportStream << "custom transformation" << endl;
 	    ofDrawBitmapString(reportStream.str(), 20, 20);
     fbo3.end();
-    fbo3.draw(0, h, w, h);
+    fbo3.draw(p, h + 2*p, w, h);
+
+    ofFbo fbo4;
+    fbo4.allocate(w, h);
+    fbo4.begin();
+        ofBackground(ofColor(0, 0, 0, 0));
+        ofMatrix4x4 m2 = camera.getModelViewMatrix().getInverse();
+        m2.makeOrtho2DMatrix(-w/2.0, w/2.0, -h/2.0, h/2.0);
+        ofPushMatrix();
+            ofLoadMatrix(m2);
+            fbo3.draw(0, 0, w, h);
+        ofPopMatrix();
+
+        reportStream.str(""); reportStream.clear();
+        reportStream << "custom anti-transformation" << endl;
+	    ofDrawBitmapString(reportStream.str(), 20, 20);
+    fbo4.end();
+    fbo4.draw(w + 2*p, h + 2*p, w, h);
 
 
 }
