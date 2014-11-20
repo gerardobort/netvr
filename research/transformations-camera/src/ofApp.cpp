@@ -11,6 +11,7 @@ void ofApp::setup(){
 
     camera.setGlobalPosition(ofVec3f(0, 0, 400));
     camera.setTarget(ofVec3f(image.width/2.0, image.height/2.0, 0));
+    camera.setVFlip(true);
 
 }
 
@@ -63,6 +64,7 @@ void ofApp::draw(){
     fbo1.end();
     fbo1.draw(0, 0, w, h);
 
+    /*
     ofFbo fbo2;
     fbo2.allocate(w, h);
     fbo2.begin();
@@ -71,7 +73,6 @@ void ofApp::draw(){
     fbo2.end();
     fbo2.draw(w, 0, w, h);
 
-    /*
     ofFbo fbo3;
     fbo3.allocate(w, h);
     fbo3.begin();
@@ -86,7 +87,6 @@ void ofApp::draw(){
     fbo3.begin();
         ofBackground(ofColor(0, 0, 0, 0));
         ofMatrix4x4 m = camera.getModelViewMatrix();
-        //m.preMultScale(ofVec3f(1.0, 1.0, 1.0));
         ofLoadMatrix(m);
         image.draw(0, 0);
     fbo3.end();
