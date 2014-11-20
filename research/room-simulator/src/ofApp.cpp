@@ -64,7 +64,9 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
     map1.readToPixels(pixels1);
     map2.allocate(w, h, GL_RGBA);
     ofFbo fboi;
+    ofFbo fboo;
     ofMesh mesh;
+
 
     for (int u = 0; u < w; u++)
         for (int v = 0; v < h; v++) {
@@ -75,10 +77,7 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
                 pixels2[i +1] = color.g;
                 pixels2[i +2] = color.b;
                 pixels2[i +3] = color.a;
-                ofVec3f worldCoord = camera->screenToWorld(ofVec3f(u, v, 0), ofRectangle(0, 0, w, h));
-                worldCoord = camera->worldToCamera(worldCoord, ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight()));
-                worldCoord = camera->cameraToWorld(worldCoord, ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight()));
-                if (x == 0) color.r = 0; else color.g = 0;
+                ofVec3f worldCoord = ofVec3f(u, v, 0);
                 mesh.addColor(color);
                 mesh.addVertex(worldCoord);
             } else {
@@ -89,6 +88,7 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
             }
         }
 
+
     fboi.allocate(w, h);
     fboi.begin();
         ofBackground(ofColor(0, 0, 0, 0));
@@ -97,10 +97,20 @@ void ofApp::drawView(ofEasyCam* camera, int x, int y, int w, int h) {
     fboi.end();
     fboi.draw(x, y+h+1, w, h);
 
-    camera->begin();
+    camera->setVFlip(true);
+    ofMatrix4x4 m = camera->getModelViewMatrix().getInverse();
+    camera->setVFlip(false);
+
+    fboo.allocate(w, h);
+    fboo.begin();
+        ofBackground(ofColor(0, 0, 0, 200));
         glPointSize(1);
+        //camera->begin();
+        ofLoadMatrix(m);
         mesh.drawVertices();
-    camera->end();
+        //camera->end();
+    fboo.end();
+    fboo.draw(x, y+h+h+2, w, h);
 }
 
 //--------------------------------------------------------------
