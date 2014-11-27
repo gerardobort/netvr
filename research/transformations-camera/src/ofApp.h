@@ -13,11 +13,14 @@ class ofApp : public ofBaseApp{
         void update();
         void draw();
         void exit();
+		void mousePressed(int x, int y, int button);
+		void mouseMoved(int x, int y );
     
         ofImage image;
         ofEasyCam camera;
         ofShader mappingShader;
 
+        int clickCount;
         ofPoint distortedCorners[4];
         ofPoint originalCorners[4];
 };

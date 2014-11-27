@@ -15,6 +15,13 @@ void ofApp::setup(){
 
     mappingShader.load("shaders/mapping");
 
+    clickCount = -1;
+
+
+    distortedCorners[0].set(10, 10);
+    distortedCorners[1].set(70, 10);
+    distortedCorners[2].set(400, 400);
+    distortedCorners[3].set(10, 400);
 }
 
 //--------------------------------------------------------------
@@ -73,13 +80,16 @@ void ofApp::draw(){
         ofBackground(ofColor(0, 0, 0, 0));
         ofMatrix4x4 m1 = camera.getModelViewMatrix();
         ofPushMatrix();
-            ofPushMatrix();
             ofScale(0.5, 0.5, 0.5);
             ofTranslate(w/2.0, h/2.0, 0);
             ofMultMatrix(m1);
             image.draw(0, 0);
-            ofPopMatrix();
         ofPopMatrix();
+
+        ofLine(distortedCorners[3].x, distortedCorners[3].y, 0, distortedCorners[0].x, distortedCorners[0].y, 0);
+        for (int j = 1; j < 4; j++) {
+            ofLine(distortedCorners[j-1].x, distortedCorners[j-1].y, 0, distortedCorners[j].x, distortedCorners[j].y, 0);
+        }
 
         reportStream.str(""); reportStream.clear();
         reportStream << "custom transformation" << endl;
@@ -99,12 +109,6 @@ void ofApp::draw(){
     // Papers related
     // http://stackoverflow.com/questions/4316829/how-to-transform-a-projected-3d-rectangle-into-a-2d-axis-aligned-rectangle
 
-
-
-    distortedCorners[0].set(10, 10);
-    distortedCorners[1].set(70, 10);
-    distortedCorners[2].set(400, 400);
-    distortedCorners[3].set(10, 400);
 
     originalCorners[0].set(0, 0);
     originalCorners[1].set(w, 0);
@@ -128,8 +132,24 @@ void ofApp::draw(){
     fbo4.end();
     fbo4.draw(w + 2*p, h + 2*p, w, h);
 
+    reportStream.str(""); reportStream.clear();
+    reportStream << "clickCount: " << clickCount << endl;
+    ofDrawBitmapString(reportStream.str(), 20, 500);
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
+}
+
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+    clickCount++;
+    if (mouseY > image.height/2) {
+	    distortedCorners[clickCount % 4].set(mouseX - 2*10, mouseY - image.height/2.0 -2*10);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y){
 }
