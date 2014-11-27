@@ -15,4 +15,5 @@ class ofApp : public ofBaseApp{
     
         ofImage image;
         ofEasyCam camera;
+        ofShader mappingShader;
 };

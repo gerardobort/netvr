@@ -13,6 +13,8 @@ void ofApp::setup(){
     camera.setTarget(ofVec3f(image.width/2.0, image.height/2.0, 0));
     camera.setVFlip(true);
 
+    mappingShader.load("shaders/mapping");
+
 }
 
 //--------------------------------------------------------------
@@ -32,29 +34,6 @@ void ofApp::draw(){
     int w = image.width/2.0;
     int h = image.height/2.0;
     int p = 10;
-
-    ofPixels pixels1 = image.getPixelsRef();
-    unsigned char pixels2[w*h*3];
-    ofTexture out1;
-    out1.allocate(w, h, GL_RGB);
-    ofMesh mesh1;
-    ofMesh mesh2;
-
-    for (int u = 0; u < w; u++)
-        for (int v = 0; v < h; v++) {
-            int i = 3*(v*w + u);
-            ofColor color = ofColor(pixels1[i +0], pixels1[i +1], pixels1[i +2], 255);
-            ofVec3f vertex = ofVec3f(u, v, 0);
-
-            ofMatrix4x4 m = ofMatrix4x4::newTranslationMatrix(0.001, 0.001, 0) * ofMatrix4x4::newRotationMatrix(45, 1.0, 1.0, 1.0) * ofMatrix4x4::newScaleMatrix(0.5, 0.5, 0.5);
-            vertex = m.postMult(vertex);
-            mesh1.addColor(color);
-            mesh1.addVertex(vertex);
-
-            vertex = m.getInverse().postMult(vertex);
-            mesh2.addColor(color);
-            mesh2.addVertex(vertex);
-        }
 
 
     stringstream reportStream;
@@ -92,8 +71,10 @@ void ofApp::draw(){
         ofBackground(ofColor(0, 0, 0, 0));
         ofMatrix4x4 m1 = camera.getModelViewMatrix();
         ofPushMatrix();
+            ofPushMatrix();
             ofLoadMatrix(m1);
             image.draw(0, 0);
+            ofPopMatrix();
         ofPopMatrix();
 
         reportStream.str(""); reportStream.clear();
@@ -102,23 +83,102 @@ void ofApp::draw(){
     fbo3.end();
     fbo3.draw(p, h + 2*p, w, h);
 
+    // ---- processing anti-transform
+
+    ofTexture out1 = fbo1.getTextureReference();
+    ofMesh mesh;
+
+    mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+    mesh.addVertex(ofVec3f(-w/2.0, -h/2.0, -200.0)); // A
+    mesh.addVertex(ofVec3f( w/2.0, -h/2.0, -200.0)); // B
+    mesh.addVertex(ofVec3f(-w/2.0,  h/2.0, -200.0)); // C
+    mesh.addVertex(ofVec3f( w/2.0, -h/2.0, -200.0)); // B
+    mesh.addVertex(ofVec3f(-w/2.0,  h/2.0, -200.0)); // C
+    mesh.addVertex(ofVec3f( w/2.0,  h/2.0, -200.0)); // D
+
+    ofVec3f tmpVec3;
+    ofVec2f tmpVec2;
+
+    /*
+    tmpVec3 = m1.postMult(ofVec3f(0, 0, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // A
+    tmpVec3 = m1.postMult(ofVec3f(w, 0, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // B
+    tmpVec3 = m1.postMult(ofVec3f(0, h, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // C
+    tmpVec3 = m1.postMult(ofVec3f(w, 0, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // B
+    tmpVec3 = m1.postMult(ofVec3f(0, h, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // C
+    tmpVec3 = m1.postMult(ofVec3f(w, h, 0));   tmpVec2 = ofVec2f(tmpVec3.x, tmpVec3.y);   mesh.addTexCoord(tmpVec2); // D
+    */
+    mesh.addTexCoord(ofVec2f(20.0, 20.0)); // A
+    mesh.addTexCoord(ofVec2f(100.0, 20.0)); // B
+    mesh.addTexCoord(ofVec2f(20.0, 300.0)); // C
+    mesh.addTexCoord(ofVec2f(100.0, 20.0)); // B
+    mesh.addTexCoord(ofVec2f(20.0, 300.0)); // C
+    mesh.addTexCoord(ofVec2f(300.0, 30.0)); // D
+
+    // Problem description
+    // http://blender.stackexchange.com/questions/3156/how-to-map-a-texture-to-a-distorted-quad
+
+    // https://github.com/roymacdonald/ofxGLWarper
+    // http://forum.openframeworks.cc/t/quad-warping-an-entire-opengl-view-solved/509/46
+    // http://openframeworks.cc/documentation/gl/ofVbo.html
+    // https://sites.google.com/site/ofauckland/examples/draw-cube-with-ofmesh-and-ofvbo
+
+    // Papers related
+    // http://stackoverflow.com/questions/4316829/how-to-transform-a-projected-3d-rectangle-into-a-2d-axis-aligned-rectangle
+
+    const float Verts[] = {
+        0.000f,  0.000f,  0.447f,
+        1.000f,  0.000f,  0.447f,
+        1.000f,  1.000f,  0.447f,
+        0.000f,  1.000f,  0.447f};
+
+    ofVec3f v[4];
+    ofVec3f n[4];
+    ofFloatColor c[4];
+    ofVbo vbo;
+
+        int i, j = 0;
+        for ( i = 0; i < 4; i++ ) {
+            c[i].r = ofRandom(1.0);
+            c[i].g = ofRandom(1.0);
+            c[i].b = ofRandom(1.0);
+     
+            v[i][0] = Verts[j++] * 200.f;
+            v[i][1] = Verts[j++] * 200.f;
+            v[i][2] = Verts[j++] * 200.f;
+        }
+     
+        vbo.setVertexData( &v[0], 12, GL_STATIC_DRAW );
+        vbo.setColorData( &c[0], 12, GL_STATIC_DRAW );
+        //vbo.setTexCoordData( &Verts[0], 2, 8, GL_STATIC_DRAW );
+     
+        glEnable(GL_DEPTH_TEST);
+
+        ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 100);
+        //ofRotate(ofGetElapsedTimef() * 20.0, 1, 1, 0);
+        glPointSize(10.f);
+
+        glEnable(GL_DEPTH_TEST);
+
+        vbo.draw( GL_LINE_LOOP, 0, 4 );
+
+        vbo.draw( GL_QUADS, 0, 4 );
+    
+
     ofFbo fbo4;
     fbo4.allocate(w, h);
     fbo4.begin();
         ofBackground(ofColor(0, 0, 0, 0));
-        ofMatrix4x4 m2 = camera.getModelViewMatrix().getInverse();
-        m2.makeOrtho2DMatrix(-w/2.0, w/2.0, -h/2.0, h/2.0);
-        ofPushMatrix();
-            ofLoadMatrix(m2);
-            fbo3.draw(0, 0, w, h);
-        ofPopMatrix();
+        fbo3.getTextureReference().bind();
+        mappingShader.begin();
+        //mesh.drawFaces();
+        mappingShader.end();
+        fbo3.getTextureReference().unbind();
 
         reportStream.str(""); reportStream.clear();
         reportStream << "custom anti-transformation" << endl;
 	    ofDrawBitmapString(reportStream.str(), 20, 20);
     fbo4.end();
     fbo4.draw(w + 2*p, h + 2*p, w, h);
-
 
 }
 
