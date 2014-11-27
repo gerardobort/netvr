@@ -125,54 +125,36 @@ void ofApp::draw(){
     // Papers related
     // http://stackoverflow.com/questions/4316829/how-to-transform-a-projected-3d-rectangle-into-a-2d-axis-aligned-rectangle
 
-    const float Verts[] = {
-        0.000f,  0.000f,  0.447f,
-        1.000f,  0.000f,  0.447f,
-        1.000f,  1.000f,  0.447f,
-        0.000f,  1.000f,  0.447f};
 
-    ofVec3f v[4];
-    ofVec3f n[4];
-    ofFloatColor c[4];
-    ofVbo vbo;
+    ofPoint distortedCorners[4];
+    ofPoint originalCorners[4];
 
-        int i, j = 0;
-        for ( i = 0; i < 4; i++ ) {
-            c[i].r = ofRandom(1.0);
-            c[i].g = ofRandom(1.0);
-            c[i].b = ofRandom(1.0);
-     
-            v[i][0] = Verts[j++] * 200.f;
-            v[i][1] = Verts[j++] * 200.f;
-            v[i][2] = Verts[j++] * 200.f;
-        }
-     
-        vbo.setVertexData( &v[0], 12, GL_STATIC_DRAW );
-        vbo.setColorData( &c[0], 12, GL_STATIC_DRAW );
-        //vbo.setTexCoordData( &Verts[0], 2, 8, GL_STATIC_DRAW );
-     
-        glEnable(GL_DEPTH_TEST);
+    distortedCorners[0].set(10, 10);
+    distortedCorners[1].set(70, 10);
+    distortedCorners[2].set(400, 400);
+    distortedCorners[3].set(10, 400);
 
-        ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 100);
-        //ofRotate(ofGetElapsedTimef() * 20.0, 1, 1, 0);
-        glPointSize(10.f);
-
-        glEnable(GL_DEPTH_TEST);
-
-        vbo.draw( GL_LINE_LOOP, 0, 4 );
-
-        vbo.draw( GL_QUADS, 0, 4 );
-    
+    originalCorners[0].set(10, 10);
+    originalCorners[1].set(100, 10);
+    originalCorners[2].set(100, 100);
+    originalCorners[3].set(10, 100);
+	
+    ofMatrix4x4 homography = ofxHomography::findHomography(distortedCorners, originalCorners);
 
     ofFbo fbo4;
     fbo4.allocate(w, h);
     fbo4.begin();
         ofBackground(ofColor(0, 0, 0, 0));
-        fbo3.getTextureReference().bind();
-        mappingShader.begin();
+        //fbo3.getTextureReference().bind();
+        //mappingShader.begin();
         //mesh.drawFaces();
-        mappingShader.end();
-        fbo3.getTextureReference().unbind();
+        ofPushMatrix();
+        //ofTranslate(0,0,-300);
+        ofMultMatrix(homography);
+        image.draw(0, 0);
+        ofPopMatrix();
+        //mappingShader.end();
+        //fbo3.getTextureReference().unbind();
 
         reportStream.str(""); reportStream.clear();
         reportStream << "custom anti-transformation" << endl;
