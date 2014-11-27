@@ -9,11 +9,9 @@ class ofApp : public ofBaseApp{
 
     public:
         void setup();
-        void update();
         void draw();
-        void exit();
     
-        ofImage image;
+        ofVbo vbo;
         ofEasyCam camera;
-        ofShader mappingShader;
+        ofImage image;
 };
