@@ -16,17 +16,17 @@ void ofApp::setup(){
     mappingShader.load("shaders/mapping");
 
     clickCount = -1;
-
-
     distortedCorners[0].set(10, 10);
     distortedCorners[1].set(70, 10);
     distortedCorners[2].set(400, 400);
     distortedCorners[3].set(10, 400);
+
+    videoGrabber.initGrabber(640, 480);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    videoGrabber.update();
 }
 
 //--------------------------------------------------------------
@@ -80,10 +80,11 @@ void ofApp::draw(){
         ofBackground(ofColor(0, 0, 0, 0));
         ofMatrix4x4 m1 = camera.getModelViewMatrix();
         ofPushMatrix();
-            ofScale(0.5, 0.5, 0.5);
-            ofTranslate(w/2.0, h/2.0, 0);
-            ofMultMatrix(m1);
-            image.draw(0, 0);
+            videoGrabber.draw(0, 0, w, h);
+            //ofScale(0.5, 0.5, 0.5);
+            //ofTranslate(w/2.0, h/2.0, 0);
+            //ofMultMatrix(m1);
+            //image.draw(0, 0);
         ofPopMatrix();
 
         ofLine(distortedCorners[3].x, distortedCorners[3].y, 0, distortedCorners[0].x, distortedCorners[0].y, 0);

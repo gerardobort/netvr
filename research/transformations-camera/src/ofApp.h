@@ -23,4 +23,5 @@ class ofApp : public ofBaseApp{
         int clickCount;
         ofPoint distortedCorners[4];
         ofPoint originalCorners[4];
+        ofVideoGrabber videoGrabber;
 };
