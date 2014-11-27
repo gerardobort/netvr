@@ -17,4 +17,7 @@ class ofApp : public ofBaseApp{
         ofImage image;
         ofEasyCam camera;
         ofShader mappingShader;
+
+        ofPoint distortedCorners[4];
+        ofPoint originalCorners[4];
 };
