@@ -15,17 +15,29 @@ void ofApp::setup(){
     ofSetWindowTitle("netvr - prototype dashboard");
 
     bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
+    bufferFlow.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
     bufferRoom.allocate(600, 400, GL_RGBA);
     roomMapping.load("shaders/mapping");
     roomCamera.setPosition(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_WIDTH+INT_ROOM_HEIGHT));
     roomCamera.setTarget(ofVec3f(0, INT_ROOM_HEIGHT/2.0, 0));
     roomCamera.setDistance(INT_ROOM_WIDTH+INT_ROOM_HEIGHT);
+
+    opticalFlow.setup(INT_ROOM_WIDTH/4.0, INT_ROOM_DEPTH/4.0);
+    velocityField.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+
+    lastTime = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
+    didCamsUpdate = false;
+    for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
         nodes[i]->update();
+        didCamsUpdate = didCamsUpdate || nodes[i]->videoGrabber.isFrameNew();
+    }
+
+    deltaTime = ofGetElapsedTimef() - lastTime;
+    lastTime = ofGetElapsedTimef();
 }
 
 //--------------------------------------------------------------
@@ -35,7 +47,9 @@ void ofApp::draw(){
     ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 
     drawProjections();
+    drawOpticalFlow();
     drawRoom();
+    
 }
 
 void ofApp::drawProjections(){
@@ -51,7 +65,7 @@ void ofApp::drawProjections(){
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
-    bufferProjections.draw(0, 400, 1200, 400);
+    bufferProjections.draw(600, 400, 600, 400);
 }
 
 void ofApp::drawRoom(){
@@ -72,15 +86,21 @@ void ofApp::drawRoom(){
     room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, 0));
     room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
 
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
-
-
     ofMesh roomWireframe;
+    roomWireframe.addVertex(ofVec3f(0, -10, 0));
+    roomWireframe.addVertex(ofVec3f(0, -10, INT_ROOM_DEPTH));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, -10, INT_ROOM_DEPTH));
+    roomWireframe.addVertex(ofVec3f(0, -10, 0));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, -10, 0));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, -10, INT_ROOM_DEPTH));
+
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+
     roomWireframe.addVertex(ofVec3f(0, INT_ROOM_HEIGHT, 0));
     roomWireframe.addVertex(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
     roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
@@ -88,10 +108,14 @@ void ofApp::drawRoom(){
     roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, 0));
     roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
 
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
+    roomWireframe.addColor(ofColor(0, 100, 0));
 
-
-
-    bufferProjections.getTextureReference().bind();
+    bufferFlow.getTextureReference().bind();
     bufferRoom.begin();
         ofBackground(0);
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
@@ -100,14 +124,30 @@ void ofApp::drawRoom(){
             ofTranslate(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0);
             roomMapping.begin();
             room.drawFaces();
-            roomWireframe.drawWireframe();
             roomMapping.end();
+            roomWireframe.drawWireframe();
+            glPointSize(4);
+            roomWireframe.drawVertices();
             ofPopMatrix();
             ofDisableDepthTest();
         roomCamera.end();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
 }
+
+void ofApp::drawOpticalFlow(){
+    if (didCamsUpdate) {
+        opticalFlow.setSource(bufferProjections.getTextureReference());
+        opticalFlow.update(deltaTime);
+    }
+    velocityField.setSource(opticalFlow.getOpticalFlowDecay());
+    bufferFlow.begin();
+        ofBackground(0);
+        velocityField.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+    bufferFlow.end();
+    bufferFlow.draw(0, 400, 600, 400);
+}
+
 
 //--------------------------------------------------------------
 void ofApp::exit(){

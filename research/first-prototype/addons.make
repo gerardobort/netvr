@@ -1,3 +1,4 @@
 ofxVectorMath
 ofxHomography
 ofxGui
+ofxFlowTools
