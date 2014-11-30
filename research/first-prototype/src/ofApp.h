@@ -9,7 +9,7 @@
 #define INT_NODES_AMOUNT 2
 #define INT_ROOM_WIDTH 2000
 #define INT_ROOM_HEIGHT 200
-#define INT_ROOM_DEPH 1000
+#define INT_ROOM_DEPTH 1000
 
 class ofApp : public ofBaseApp{
 

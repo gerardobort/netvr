@@ -14,12 +14,12 @@ void ofApp::setup(){
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
-    bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPH, GL_RGBA);
+    bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
     bufferRoom.allocate(600, 400, GL_RGBA);
     roomMapping.load("shaders/mapping");
-    roomCamera.setPosition(ofVec3f(0, 400, 2000));
-    roomCamera.setTarget(ofVec3f(0, 100, 0));
-    roomCamera.setDistance(600);
+    roomCamera.setPosition(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_WIDTH+INT_ROOM_HEIGHT));
+    roomCamera.setTarget(ofVec3f(0, INT_ROOM_HEIGHT/2.0, 0));
+    roomCamera.setDistance(INT_ROOM_WIDTH+INT_ROOM_HEIGHT);
 }
 
 //--------------------------------------------------------------
@@ -47,7 +47,7 @@ void ofApp::drawProjections(){
         ofEnableBlendMode(OF_BLENDMODE_ADD);
         ofBackground(0);
         for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-            nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPH);
+            nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
@@ -97,7 +97,7 @@ void ofApp::drawRoom(){
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
             ofEnableDepthTest();
             ofPushMatrix();
-            ofTranslate(-300, 0, -200);
+            ofTranslate(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0);
             roomMapping.begin();
             room.drawFaces();
             roomWireframe.drawWireframe();
