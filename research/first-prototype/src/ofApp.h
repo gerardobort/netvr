@@ -19,12 +19,13 @@ class ofApp : public ofBaseApp{
         void update();
         void draw();
         void drawProjections();
-        void drawRoom();
         void drawOpticalFlow();
+        void drawRoom();
         void exit();
 		void mouseDragged(int x, int y, int button);
 
         void listCameraDevices();
+        void keyPressed(int key);
 
         nvrNode *nodes[INT_NODES_AMOUNT];
         ofFbo bufferProjections;
@@ -42,4 +43,5 @@ class ofApp : public ofBaseApp{
         flowTools::ftVelocityField velocityField;
 
         bool didCamsUpdate;
+        bool showFlow;
 };

@@ -28,6 +28,7 @@ void ofApp::setup(){
     velocityField.allocate(INT_ROOM_WIDTH/16.0, INT_ROOM_DEPTH/16.0);
 
     lastTime = ofGetElapsedTimef();
+    showFlow = true;
 }
 
 //--------------------------------------------------------------
@@ -70,8 +71,34 @@ void ofApp::drawProjections(){
     bufferProjections.draw(600, 400, 600, 400);
 }
 
-void ofApp::drawRoom(){
+void ofApp::drawOpticalFlow(){
+    if (didCamsUpdate) {
+        opticalFlow.setSource(bufferProjections.getTextureReference());
+        opticalFlow.update(deltaTime);
+        velocityMask.setDensity(bufferProjections.getTextureReference());
+        velocityMask.setVelocity(opticalFlow.getOpticalFlow());
+        velocityMask.update();
+        fluid.addVelocity(opticalFlow.getOpticalFlowDecay());
+        fluid.addDensity(velocityMask.getColorMask());
+        fluid.addTemperature(velocityMask.getLuminanceMask());
+        fluid.update();
+    }
+    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
+    velocityField.setSource(fluid.getVelocity());
+    ofEnableAlphaBlending();
+    bufferFlow.begin();
+        ofClear(0, 0, 0, 0);
+        ofSetBackgroundColor(255, 0, 0, 0);
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        velocityField.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+        ofDisableBlendMode();
+    bufferFlow.end();
+    bufferFlow.draw(0, 400, 600, 400);
+    ofDisableAlphaBlending();
+}
 
+void ofApp::drawRoom(){
 
     ofMesh room;
     room.addVertex(ofVec3f(0, 0, 0));
@@ -117,7 +144,10 @@ void ofApp::drawRoom(){
     roomWireframe.addColor(ofColor(0, 100, 0));
     roomWireframe.addColor(ofColor(0, 100, 0));
 
-    bufferFlow.getTextureReference().bind();
+    if (showFlow)
+        bufferFlow.getTextureReference().bind();
+    else
+        bufferProjections.getTextureReference().bind();
     bufferRoom.begin();
         ofBackground(0);
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
@@ -135,29 +165,6 @@ void ofApp::drawRoom(){
         roomCamera.end();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
-}
-
-void ofApp::drawOpticalFlow(){
-    if (didCamsUpdate) {
-        opticalFlow.setSource(bufferProjections.getTextureReference());
-        opticalFlow.update(deltaTime);
-        velocityMask.setDensity(bufferProjections.getTextureReference());
-        velocityMask.setVelocity(opticalFlow.getOpticalFlow());
-        velocityMask.update();
-        fluid.addVelocity(opticalFlow.getOpticalFlowDecay());
-        fluid.addDensity(velocityMask.getColorMask());
-        fluid.addTemperature(velocityMask.getLuminanceMask());
-        fluid.update();
-    }
-    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
-    velocityField.setSource(fluid.getVelocity());
-    bufferFlow.begin();
-        ofBackground(0);
-        ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-        velocityField.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-    bufferFlow.end();
-    bufferFlow.draw(0, 400, 600, 400);
 }
 
 
@@ -191,4 +198,13 @@ void ofApp::listCameraDevices(){
     }
     cout << "***** Total number of detected cameras: " << allCameras.size() << endl << endl;
 
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+	switch (key) {
+		case 'f':
+            showFlow = !showFlow;
+			break;
+	}
 }
