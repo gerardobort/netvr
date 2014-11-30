@@ -37,7 +37,8 @@ class ofApp : public ofBaseApp{
         float deltaTime;
 
         flowTools::ftOpticalFlow opticalFlow;
-        flowTools::ftDisplayScalar displayScalar;
+        flowTools::ftVelocityMask velocityMask;
+        flowTools::ftFluidSimulation fluid;
         flowTools::ftVelocityField velocityField;
 
         bool didCamsUpdate;

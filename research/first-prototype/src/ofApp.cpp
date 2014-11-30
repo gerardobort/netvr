@@ -23,7 +23,9 @@ void ofApp::setup(){
     roomCamera.setDistance(INT_ROOM_WIDTH+INT_ROOM_HEIGHT);
 
     opticalFlow.setup(INT_ROOM_WIDTH/4.0, INT_ROOM_DEPTH/4.0);
-    velocityField.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+    velocityMask.setup(INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+    fluid.setup(INT_ROOM_DEPTH/4.0, INT_ROOM_DEPTH/4.0, INT_ROOM_WIDTH, INT_ROOM_DEPTH, false);
+    velocityField.allocate(INT_ROOM_WIDTH/16.0, INT_ROOM_DEPTH/16.0);
 
     lastTime = ofGetElapsedTimef();
 }
@@ -139,11 +141,21 @@ void ofApp::drawOpticalFlow(){
     if (didCamsUpdate) {
         opticalFlow.setSource(bufferProjections.getTextureReference());
         opticalFlow.update(deltaTime);
+        velocityMask.setDensity(bufferProjections.getTextureReference());
+        velocityMask.setVelocity(opticalFlow.getOpticalFlow());
+        velocityMask.update();
+        fluid.addVelocity(opticalFlow.getOpticalFlowDecay());
+        fluid.addDensity(velocityMask.getColorMask());
+        fluid.addTemperature(velocityMask.getLuminanceMask());
+        fluid.update();
     }
-    velocityField.setSource(opticalFlow.getOpticalFlowDecay());
+    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
+    velocityField.setSource(fluid.getVelocity());
     bufferFlow.begin();
         ofBackground(0);
+        ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         velocityField.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
     bufferFlow.end();
     bufferFlow.draw(0, 400, 600, 400);
 }
