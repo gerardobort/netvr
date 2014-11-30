@@ -77,10 +77,10 @@ void nvrNode::draw(int x, int y, int width, int height){
             ofLine(inputCorners[j-1].x, inputCorners[j-1].y, 0, inputCorners[j].x, inputCorners[j].y, 0);
         }
 
+        ofDisableAlphaBlending();
         reportStream.str(""); reportStream.clear();
         reportStream << "input stream" << endl;
-        ofDrawBitmapString(reportStream.str(), 20, height -20);
-        ofDisableAlphaBlending();
+        ofDrawBitmapString(reportStream.str(), 20, drawHeight -20);
     bufferInput.end();
 
     bufferOutput.begin();
@@ -104,7 +104,7 @@ void nvrNode::draw(int x, int y, int width, int height){
 
         reportStream.str(""); reportStream.clear();
         reportStream << "output stream" << endl;
-        ofDrawBitmapString(reportStream.str(), 20, height -20);
+        ofDrawBitmapString(reportStream.str(), 20, drawHeight -20);
         ofDisableAlphaBlending();
     bufferOutput.end();
 
