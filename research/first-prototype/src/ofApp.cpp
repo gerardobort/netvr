@@ -47,11 +47,11 @@ void ofApp::drawProjections(){
         ofEnableBlendMode(OF_BLENDMODE_ADD);
         ofBackground(0);
         for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-            nodes[i]->bufferOutput.draw(0, 0, 600, 400);
+            nodes[i]->bufferOutput.draw(0, 0, 1200, 400);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
-    bufferProjections.draw(600, 400, 600, 400);
+    bufferProjections.draw(0, 400, 1200, 400);
 }
 
 void ofApp::drawRoom(){
