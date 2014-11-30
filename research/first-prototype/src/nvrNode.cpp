@@ -6,10 +6,10 @@ nvrNode::nvrNode(int cameraWidth, int cameraHeight, int deviceId) : cameraWidth(
 
     mappingShader.load("shaders/mapping");
 
-    inputCorners[0].set(10, 10);
-    inputCorners[1].set(70, 10);
-    inputCorners[2].set(150, 140);
-    inputCorners[3].set(10, 160);
+    inputCorners[0].set(cameraWidth/5.0, cameraHeight/5.0);
+    inputCorners[1].set(cameraWidth - cameraWidth/5.0, cameraHeight/5.0);
+    inputCorners[2].set(cameraWidth - cameraWidth/5.0, cameraHeight - cameraHeight/5.0);
+    inputCorners[3].set(cameraWidth/5.0, cameraHeight - cameraHeight/5.0);
 
     if (deviceId) {
         videoGrabber.setDeviceID(deviceId);
