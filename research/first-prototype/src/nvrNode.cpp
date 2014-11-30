@@ -119,6 +119,9 @@ void nvrNode::draw(int x, int y, int width, int height){
 //--------------------------------------------------------------
 void nvrNode::mouseDragged(int x, int y, int button){
 
+    float sx = cameraWidth/(float)drawWidth;
+    float sy = cameraHeight/(float)drawHeight;
+
     if (x < drawX || x > drawX + drawWidth) return;
     if (y < drawY || y > drawY + drawHeight) return;
 
@@ -135,7 +138,7 @@ void nvrNode::mouseDragged(int x, int y, int button){
 
     int dMin = cameraWidth * cameraHeight;
     int jMin = INT_CORNERS_AMOUNT;
-    ofPoint mousePoint = ofPoint(x, y);
+    ofPoint mousePoint = ofPoint(x*sx, 2.0*y*sy);
     for (int j = 0; j < INT_CORNERS_AMOUNT; j++) {
         int distance = mousePoint.distance(pointSet[j]);
         if (distance < dMin) {
@@ -143,5 +146,5 @@ void nvrNode::mouseDragged(int x, int y, int button){
             jMin = j;
         }
     }
-    pointSet[jMin].set(x, y);
+    pointSet[jMin].set(mousePoint.x, mousePoint.y);
 }

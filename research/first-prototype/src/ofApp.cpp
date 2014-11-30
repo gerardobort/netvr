@@ -14,8 +14,8 @@ void ofApp::setup(){
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
-    bufferProjections.allocate(600, 400, GL_RGBA);
-    bufferRoom.allocate(600, 400);
+    bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPH, GL_RGBA);
+    bufferRoom.allocate(600, 400, GL_RGBA);
     roomMapping.load("shaders/mapping");
     roomCamera.setPosition(ofVec3f(0, 400, 2000));
     roomCamera.setTarget(ofVec3f(0, 100, 0));
@@ -47,7 +47,7 @@ void ofApp::drawProjections(){
         ofEnableBlendMode(OF_BLENDMODE_ADD);
         ofBackground(0);
         for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-            nodes[i]->bufferOutput.draw(0, 0, 1200, 400);
+            nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPH);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
