@@ -59,34 +59,34 @@ void ofApp::drawRoom(){
 
     ofMesh room;
     room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(0, 0, INT_WORLD_DEPTH));
-    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, INT_WORLD_DEPTH));
+    room.addVertex(ofVec3f(0, 0, INT_ROOM_DEPTH));
+    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
     room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, 0));
-    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, INT_WORLD_DEPTH));
+    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, 0));
+    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
 
     room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(0, INT_WORLD_DEPTH));
-    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, INT_WORLD_DEPTH));
+    room.addTexCoord(ofVec2f(0, INT_ROOM_DEPTH));
+    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
     room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, 0));
-    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, INT_WORLD_DEPTH));
+    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, 0));
+    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
 
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
-    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_ROOM_HEIGHT, 0));
 
 
     ofMesh roomWireframe;
-    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, 0));
-    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
-    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
-    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, 0));
-    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, 0));
-    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
+    roomWireframe.addVertex(ofVec3f(0, INT_ROOM_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
+    roomWireframe.addVertex(ofVec3f(0, INT_ROOM_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(INT_ROOM_WIDTH, INT_ROOM_HEIGHT, INT_ROOM_DEPTH));
 
 
 
