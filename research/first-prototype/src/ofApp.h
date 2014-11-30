@@ -8,6 +8,7 @@
 #define M_PI 3.1415926535897932384626433832795
 #define INT_NODES_AMOUNT 2
 #define INT_ROOM_WIDTH 2000
+#define INT_ROOM_HEIGHT 200
 #define INT_ROOM_DEPH 1000
 
 class ofApp : public ofBaseApp{

@@ -10,7 +10,7 @@ void ofApp::setup(){
     listCameraDevices();
     
     for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i] = new nvrNode(300, 200);
+        nodes[i] = new nvrNode(640, 480);
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
@@ -59,34 +59,34 @@ void ofApp::drawRoom(){
 
     ofMesh room;
     room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(0, 0, 400));
-    room.addVertex(ofVec3f(600, 0, 400));
+    room.addVertex(ofVec3f(0, 0, INT_WORLD_DEPTH));
+    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, INT_WORLD_DEPTH));
     room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(600, 0, 0));
-    room.addVertex(ofVec3f(600, 0, 400));
+    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, 0));
+    room.addVertex(ofVec3f(INT_WORLD_WIDTH, 0, INT_WORLD_DEPTH));
 
     room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(0, 400));
-    room.addTexCoord(ofVec2f(600, 400));
+    room.addTexCoord(ofVec2f(0, INT_WORLD_DEPTH));
+    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, INT_WORLD_DEPTH));
     room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(600, 0));
-    room.addTexCoord(ofVec2f(600, 400));
+    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, 0));
+    room.addTexCoord(ofVec2f(INT_WORLD_WIDTH, INT_WORLD_DEPTH));
 
-    room.addColor(ofColor(0, 200, 0));
-    room.addColor(ofColor(0, 200, 0));
-    room.addColor(ofColor(0, 200, 0));
-    room.addColor(ofColor(0, 200, 0));
-    room.addColor(ofColor(0, 200, 0));
-    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
+    room.addColor(ofColor(0, INT_WORLD_HEIGHT, 0));
 
 
     ofMesh roomWireframe;
-    roomWireframe.addVertex(ofVec3f(0, 200, 0));
-    roomWireframe.addVertex(ofVec3f(0, 200, 400));
-    roomWireframe.addVertex(ofVec3f(600, 200, 400));
-    roomWireframe.addVertex(ofVec3f(0, 200, 0));
-    roomWireframe.addVertex(ofVec3f(600, 200, 0));
-    roomWireframe.addVertex(ofVec3f(600, 200, 400));
+    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
+    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
+    roomWireframe.addVertex(ofVec3f(0, INT_WORLD_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, 0));
+    roomWireframe.addVertex(ofVec3f(INT_WORLD_WIDTH, INT_WORLD_HEIGHT, INT_WORLD_DEPTH));
 
 
 
