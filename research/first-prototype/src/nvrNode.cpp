@@ -53,6 +53,8 @@ void nvrNode::update(){
 //--------------------------------------------------------------
 void nvrNode::draw(int x, int y, int width, int height){
 
+    drawX = x;
+    drawY = y;
     drawWidth = width;
     drawHeight = height;
 
@@ -108,14 +110,21 @@ void nvrNode::draw(int x, int y, int width, int height){
 
     ofSetColor(255); // color fix
 
-    bufferInput.draw(x, y, drawWidth, drawHeight/2.0);
-    bufferOutput.draw(x, y + drawHeight/2.0, drawWidth, drawHeight/2.0);
+    bufferInput.draw(drawX, drawY, drawWidth, drawHeight/2.0);
+    bufferOutput.draw(drawX, drawY + drawHeight/2.0, drawWidth, drawHeight/2.0);
 
 }
 
 
 //--------------------------------------------------------------
 void nvrNode::mouseDragged(int x, int y, int button){
+
+    if (x < drawX || x > drawX + drawWidth) return;
+    if (y < drawY || y > drawY + drawHeight) return;
+
+    x -= drawX;
+    y -= drawY;
+
     ofPoint *pointSet;
     if (y < drawHeight/2.0) {
         pointSet = &inputCorners[0];

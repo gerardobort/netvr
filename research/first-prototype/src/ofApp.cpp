@@ -56,14 +56,10 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    if (x < 300)
-        node1->mouseDragged(x, y, button);
-    else if (x < 600)
-        node2->mouseDragged(x -300, y, button);
-    else if (x < 900)
-        node3->mouseDragged(x -600, y, button);
-    else
-        node4->mouseDragged(x -900, y, button);
+    node1->mouseDragged(x, y, button);
+    node2->mouseDragged(x, y, button);
+    node3->mouseDragged(x, y, button);
+    node4->mouseDragged(x, y, button);
 }
 
 //--------------------------------------------------------------

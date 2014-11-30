@@ -20,6 +20,8 @@ class nvrNode {
         int cameraWidth;
         int cameraHeight;
 
+        int drawX;
+        int drawY;
         int drawWidth;
         int drawHeight;
 
