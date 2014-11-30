@@ -13,6 +13,8 @@ void ofApp::setup(){
         nodes[i] = new nvrNode(300, 200);
 
     ofSetWindowTitle("netvr - prototype dashboard");
+
+    bufferProjections.allocate(600, 400, GL_RGBA);
 }
 
 //--------------------------------------------------------------
@@ -30,14 +32,16 @@ void ofApp::draw(){
     for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
         nodes[i]->draw(i*300, 0);
 
-    ofPushView();
-    ofEnableAlphaBlending();
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i]->bufferOutput.draw(0, 400, 600, 400);
-    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-    ofDisableAlphaBlending();
-    ofPopView();
+    bufferProjections.begin();
+        ofEnableAlphaBlending();
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        ofBackground(0);
+        for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
+            nodes[i]->bufferOutput.draw(0, 0, 600, 400);
+        ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+        ofDisableAlphaBlending();
+    bufferProjections.end();
+    bufferProjections.draw(0, 400, 600, 400);
 }
 
 //--------------------------------------------------------------

@@ -20,4 +20,5 @@ class ofApp : public ofBaseApp{
         void listCameraDevices();
 
         nvrNode *nodes[INT_NODES_AMOUNT];
+        ofFbo bufferProjections;
 };
