@@ -17,6 +17,9 @@ void ofApp::setup(){
     bufferProjections.allocate(600, 400, GL_RGBA);
     bufferRoom.allocate(600, 400);
     roomMapping.load("shaders/mapping");
+    roomCamera.setPosition(ofVec3f(0, 400, 2000));
+    roomCamera.setTarget(ofVec3f(0, 100, 0));
+    roomCamera.setDistance(600);
 }
 
 //--------------------------------------------------------------
@@ -52,13 +55,15 @@ void ofApp::drawProjections(){
 }
 
 void ofApp::drawRoom(){
+
+
     ofMesh room;
     room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(0, 400, 0));
-    room.addVertex(ofVec3f(600, 400, 0));
+    room.addVertex(ofVec3f(0, 0, 400));
+    room.addVertex(ofVec3f(600, 0, 400));
     room.addVertex(ofVec3f(0, 0, 0));
     room.addVertex(ofVec3f(600, 0, 0));
-    room.addVertex(ofVec3f(600, 400, 0));
+    room.addVertex(ofVec3f(600, 0, 400));
 
     room.addTexCoord(ofVec2f(0, 0));
     room.addTexCoord(ofVec2f(0, 400));
@@ -74,16 +79,31 @@ void ofApp::drawRoom(){
     room.addColor(ofColor(0, 200, 0));
     room.addColor(ofColor(0, 200, 0));
 
+
+    ofMesh roomWireframe;
+    roomWireframe.addVertex(ofVec3f(0, 200, 0));
+    roomWireframe.addVertex(ofVec3f(0, 200, 400));
+    roomWireframe.addVertex(ofVec3f(600, 200, 400));
+    roomWireframe.addVertex(ofVec3f(0, 200, 0));
+    roomWireframe.addVertex(ofVec3f(600, 200, 0));
+    roomWireframe.addVertex(ofVec3f(600, 200, 400));
+
+
+
+
     bufferProjections.getTextureReference().bind();
     bufferRoom.begin();
         ofBackground(0);
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
+            ofEnableDepthTest();
             ofPushMatrix();
-            ofTranslate(0, 0, -400);
+            ofTranslate(-300, 0, -200);
             roomMapping.begin();
             room.drawFaces();
+            roomWireframe.drawWireframe();
             roomMapping.end();
             ofPopMatrix();
+            ofDisableDepthTest();
         roomCamera.end();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
