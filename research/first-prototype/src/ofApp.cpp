@@ -15,6 +15,8 @@ void ofApp::setup(){
     ofSetWindowTitle("netvr - prototype dashboard");
 
     bufferProjections.allocate(600, 400, GL_RGBA);
+    bufferRoom.allocate(600, 400);
+    roomMapping.load("shaders/mapping");
 }
 
 //--------------------------------------------------------------
@@ -29,8 +31,13 @@ void ofApp::draw(){
     ofColor edgeColor(40, 40, 40);
     ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 
+    drawProjections();
+    drawRoom();
+}
+
+void ofApp::drawProjections(){
     for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i]->draw(i*300, 0);
+        nodes[i]->draw(600 + i*300, 0);
 
     bufferProjections.begin();
         ofEnableAlphaBlending();
@@ -41,7 +48,45 @@ void ofApp::draw(){
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
-    bufferProjections.draw(0, 400, 600, 400);
+    bufferProjections.draw(600, 400, 600, 400);
+}
+
+void ofApp::drawRoom(){
+    ofMesh room;
+    room.addVertex(ofVec3f(0, 0, 0));
+    room.addVertex(ofVec3f(0, 400, 0));
+    room.addVertex(ofVec3f(600, 400, 0));
+    room.addVertex(ofVec3f(0, 0, 0));
+    room.addVertex(ofVec3f(600, 0, 0));
+    room.addVertex(ofVec3f(600, 400, 0));
+
+    room.addTexCoord(ofVec2f(0, 0));
+    room.addTexCoord(ofVec2f(0, 400));
+    room.addTexCoord(ofVec2f(600, 400));
+    room.addTexCoord(ofVec2f(0, 0));
+    room.addTexCoord(ofVec2f(600, 0));
+    room.addTexCoord(ofVec2f(600, 400));
+
+    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, 200, 0));
+    room.addColor(ofColor(0, 200, 0));
+
+    bufferProjections.getTextureReference().bind();
+    bufferRoom.begin();
+        ofBackground(0);
+        roomCamera.begin(ofRectangle(0, 0, 600, 400));
+            ofPushMatrix();
+            ofTranslate(0, 0, -400);
+            roomMapping.begin();
+            room.drawFaces();
+            roomMapping.end();
+            ofPopMatrix();
+        roomCamera.end();
+    bufferRoom.end();
+    bufferRoom.draw(0, 0);
 }
 
 //--------------------------------------------------------------

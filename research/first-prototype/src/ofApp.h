@@ -14,6 +14,8 @@ class ofApp : public ofBaseApp{
         void setup();
         void update();
         void draw();
+        void drawProjections();
+        void drawRoom();
         void exit();
 		void mouseDragged(int x, int y, int button);
 
@@ -21,4 +23,8 @@ class ofApp : public ofBaseApp{
 
         nvrNode *nodes[INT_NODES_AMOUNT];
         ofFbo bufferProjections;
+
+        ofFbo bufferRoom;
+        ofEasyCam roomCamera;
+        ofShader roomMapping;
 };
