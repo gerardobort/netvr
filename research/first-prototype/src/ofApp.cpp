@@ -69,6 +69,10 @@ void ofApp::drawProjections(){
         ofDisableAlphaBlending();
     bufferProjections.end();
     bufferProjections.draw(600, 400, 600, 400);
+
+    reportStream.str(""); reportStream.clear();
+    reportStream << "outputs projection" << endl;
+    ofDrawBitmapString(reportStream.str(), 600 +10, 400 +20);
 }
 
 void ofApp::drawOpticalFlow(){
@@ -96,6 +100,10 @@ void ofApp::drawOpticalFlow(){
     bufferFlow.end();
     bufferFlow.draw(0, 400, 600, 400);
     ofDisableAlphaBlending();
+
+    reportStream.str(""); reportStream.clear();
+    reportStream << "optical flow" << endl;
+    ofDrawBitmapString(reportStream.str(), 0 +10, 400 +20);
 }
 
 void ofApp::drawRoom(){
@@ -165,6 +173,10 @@ void ofApp::drawRoom(){
         roomCamera.end();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
+
+    reportStream.str(""); reportStream.clear();
+    reportStream << "3d room [press 'f' to toggle view]" << endl;
+    ofDrawBitmapString(reportStream.str(), 0 +10, 0 +20);
 }
 
 

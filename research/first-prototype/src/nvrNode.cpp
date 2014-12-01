@@ -78,9 +78,6 @@ void nvrNode::draw(int x, int y, int width, int height){
         }
 
         ofDisableAlphaBlending();
-        reportStream.str(""); reportStream.clear();
-        reportStream << "input stream" << endl;
-        ofDrawBitmapString(reportStream.str(), 20, drawHeight -20);
     bufferInput.end();
 
     bufferOutput.begin();
@@ -101,10 +98,6 @@ void nvrNode::draw(int x, int y, int width, int height){
             ofSetColor(0, 0, 255, 127);
             ofLine(outputCorners[j-1].x, outputCorners[j-1].y, 0, outputCorners[j].x, outputCorners[j].y, 0);
         }
-
-        reportStream.str(""); reportStream.clear();
-        reportStream << "output stream" << endl;
-        ofDrawBitmapString(reportStream.str(), 20, drawHeight -20);
         ofDisableAlphaBlending();
     bufferOutput.end();
 
@@ -113,6 +106,13 @@ void nvrNode::draw(int x, int y, int width, int height){
     bufferInput.draw(drawX, drawY, drawWidth, drawHeight/2.0);
     bufferOutput.draw(drawX, drawY + drawHeight/2.0, drawWidth, drawHeight/2.0);
 
+    reportStream.str(""); reportStream.clear();
+    reportStream << "input stream" << endl;
+    ofDrawBitmapString(reportStream.str(), drawX +10, drawY +20);
+
+    reportStream.str(""); reportStream.clear();
+    reportStream << "output stream" << endl;
+    ofDrawBitmapString(reportStream.str(), drawX +10, drawY + drawHeight/2.0 +20);
 }
 
 

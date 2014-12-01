@@ -27,6 +27,8 @@ class ofApp : public ofBaseApp{
         void listCameraDevices();
         void keyPressed(int key);
 
+        stringstream reportStream;
+
         nvrNode *nodes[INT_NODES_AMOUNT];
         ofFbo bufferProjections;
         ofFbo bufferFlow;
