@@ -13,8 +13,9 @@ nvrNode::nvrNode(int cameraWidth, int cameraHeight, int deviceId) : cameraWidth(
 
     if (deviceId) {
         videoGrabber.setDeviceID(deviceId);
+        cout << "************** camera device IN USE: " << deviceId << endl;
     }
-    videoGrabber.initGrabber(640, 480);
+    videoGrabber.initGrabber(cameraWidth, cameraHeight);
 
     outputCorners[0].set(0, 0);
     outputCorners[1].set(cameraWidth, 0);

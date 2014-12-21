@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include <math.h>
+#include <ctype.h>
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -9,8 +10,10 @@ void ofApp::setup(){
 
     listCameraDevices();
     
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i] = new nvrNode(640, 480);
+    nodes[0] = new nvrNode(720, 480, 0);
+    nodes[1] = new nvrNode(720, 480, 0);
+    for (int i= 2 ; i < INT_NODES_AMOUNT; i++)
+        nodes[i] = new nvrNode(320, 240);
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
@@ -29,6 +32,7 @@ void ofApp::setup(){
 
     lastTime = ofGetElapsedTimef();
     showFlow = true;
+    activeCamera = 0;
 }
 
 //--------------------------------------------------------------
@@ -49,22 +53,37 @@ void ofApp::draw(){
     ofColor edgeColor(40, 40, 40);
     ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 
+    drawCameras();
     drawProjections();
     drawOpticalFlow();
     drawRoom();
     
 }
 
-void ofApp::drawProjections(){
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i]->draw(600 + i*300, 0);
+void ofApp::drawCameras(){
+    for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
+        int w = 600/INT_NODES_AMOUNT, h = 400, x = 600 + i*w, y = 0;
+        ofEnableAlphaBlending();
+        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+        ofNoFill();
+        ofSetColor(255, 0, 0, 100);
+        nodes[i]->draw(x, y, w, h);
+        if (i == activeCamera - 1 || !activeCamera) {
+            ofRect(x +2, y +2, w -4, h -4);
+        }
+        ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+        ofDisableAlphaBlending();
+    }
+}
 
+void ofApp::drawProjections(){
     bufferProjections.begin();
         ofEnableAlphaBlending();
         ofEnableBlendMode(OF_BLENDMODE_ADD);
         ofBackground(0);
         for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
-            nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+            if (i == activeCamera - 1 || !activeCamera)
+                nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
@@ -219,4 +238,8 @@ void ofApp::keyPressed(int key){
             showFlow = !showFlow;
 			break;
 	}
+
+    if (isdigit(key)) {
+        activeCamera = key -48;
+    }
 }
