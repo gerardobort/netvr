@@ -1,0 +1,58 @@
+<settings>
+	<optical_flow>
+		<strength>88.2653</strength>
+		<offset>1</offset>
+		<labda>0.0127551</labda>
+		<treshold>0.0183673</treshold>
+		<inverse_x>0</inverse_x>
+		<inverse_y>0</inverse_y>
+		<do_time_blur>0</do_time_blur>
+		<time_blur>
+			<Decay>0.1</Decay>
+			<Decay_Blur_Radius>2</Decay_Blur_Radius>
+		</time_blur>
+	</optical_flow>
+	<velocity_mask>
+		<strength>1.17347</strength>
+		<saturation>1</saturation>
+		<blur_passes>1</blur_passes>
+		<blur_radius>6</blur_radius>
+	</velocity_mask>
+	<fluid_solver>
+		<reset>0</reset>
+		<speed>10</speed>
+		<cell_size>1.25</cell_size>
+		<iterations>40</iterations>
+		<viscosity>0.005</viscosity>
+		<vorticity>0.1</vorticity>
+		<dissipation>0.01</dissipation>
+		<advanced_dissipation>
+			<velocity_offset>0</velocity_offset>
+			<density_offset>0</density_offset>
+			<temperature_offset>0</temperature_offset>
+		</advanced_dissipation>
+		<smoke_buoyancy>
+			<sigma>0.05</sigma>
+			<weight>0.05</weight>
+			<ambient_temperature>0</ambient_temperature>
+			<gravity>0, 0</gravity>
+		</smoke_buoyancy>
+		<maximum>
+			<clampForce>0</clampForce>
+			<density>1</density>
+			<velocity>1</velocity>
+			<temperature>1</temperature>
+		</maximum>
+		<density_from_pressure>0</density_from_pressure>
+		<density_from_vorticity>0</density_from_vorticity>
+	</fluid_solver>
+	<visualisation>
+		<Flow_Enabled>0</Flow_Enabled>
+		<Amount_of_Nodes>0</Amount_of_Nodes>
+	</visualisation>
+<settings/>
+<Prototype_Params>
+		<Flow_Enabled>0</Flow_Enabled>
+		<Amount_of_Nodes>2</Amount_of_Nodes>
+	</Prototype_Params>
+</settings>

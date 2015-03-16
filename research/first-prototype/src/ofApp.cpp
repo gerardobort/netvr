@@ -31,8 +31,10 @@ void ofApp::setup(){
     velocityField.allocate(INT_ROOM_WIDTH/16.0, INT_ROOM_DEPTH/16.0);
 
     lastTime = ofGetElapsedTimef();
-    showFlow = true;
+    guipShowFlow = true;
     activeCamera = 0;
+
+	setupGui();
 }
 
 //--------------------------------------------------------------
@@ -57,12 +59,13 @@ void ofApp::draw(){
     drawProjections();
     drawOpticalFlow();
     drawRoom();
+    gui.draw();
     
 }
 
 void ofApp::drawCameras(){
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
-        int w = 600/INT_NODES_AMOUNT, h = 400, x = 600 + i*w, y = 0;
+    for (int i= 0 ; i < guipNodesAmount; i++) {
+        int w = 600/guipNodesAmount, h = 400, x = 600 + i*w, y = 0;
         ofEnableAlphaBlending();
         ofEnableBlendMode(OF_BLENDMODE_ALPHA);
         ofNoFill();
@@ -81,9 +84,9 @@ void ofApp::drawProjections(){
         ofEnableAlphaBlending();
         ofEnableBlendMode(OF_BLENDMODE_ADD);
         ofBackground(0);
-        for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
+        for (int i= 0 ; i < guipNodesAmount; i++)
             if (i == activeCamera - 1 || !activeCamera)
-                nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+                nodes[i]->bufferOutput.draw((guipFlipCamsHorizontally ? INT_ROOM_WIDTH : 0), 0, (guipFlipCamsHorizontally ? -1 : 1) * INT_ROOM_WIDTH, INT_ROOM_DEPTH);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
@@ -171,7 +174,7 @@ void ofApp::drawRoom(){
     roomWireframe.addColor(ofColor(0, 100, 0));
     roomWireframe.addColor(ofColor(0, 100, 0));
 
-    if (showFlow)
+    if (guipShowFlow)
         bufferFlow.getTextureReference().bind();
     else
         bufferProjections.getTextureReference().bind();
@@ -235,11 +238,51 @@ void ofApp::listCameraDevices(){
 void ofApp::keyPressed(int key){
 	switch (key) {
 		case 'f':
-            showFlow = !showFlow;
+            guipShowFlow = !guipShowFlow;
 			break;
 	}
 
     if (isdigit(key)) {
         activeCamera = key -48;
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::setupGui() {
+	
+	gui.setup("settings");
+	gui.setDefaultBackgroundColor(ofColor(0, 0, 0, 127));
+	gui.setDefaultFillColor(ofColor(160, 160, 160, 160));
+	
+	int guiColorSwitch = 0;
+	ofColor guiHeaderColor[2];
+	guiHeaderColor[0].set(160, 160, 80, 200);
+	guiHeaderColor[1].set(80, 160, 160, 200);
+	ofColor guiFillColor[2];
+	guiFillColor[0].set(160, 160, 80, 200);
+	guiFillColor[1].set(80, 160, 160, 200);
+
+	prototypeParameters.setName("Prototype Params");
+	prototypeParameters.add(guipNodesAmount.set("Amount of Nodes", 2, 1, INT_NODES_AMOUNT));
+	prototypeParameters.add(guipFlipCamsHorizontally.set("Flip Cams Horizontally", false));
+	prototypeParameters.add(guipShowFlow.set("Flow Enabled", false));
+	gui.add(prototypeParameters);
+	
+	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
+	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
+	guiColorSwitch = 1 - guiColorSwitch;
+	gui.add(opticalFlow.parameters);
+	
+	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
+	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
+	guiColorSwitch = 1 - guiColorSwitch;
+	gui.add(velocityMask.parameters);
+	
+	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
+	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
+	guiColorSwitch = 1 - guiColorSwitch;
+	gui.add(fluid.parameters);
+	
+	gui.loadFromFile("settings.xml");
+	gui.minimizeAll();
 }
