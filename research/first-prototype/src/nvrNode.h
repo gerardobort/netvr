@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofxHomography.h"
+#include "ofxFlowTools.h"
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -38,8 +39,19 @@ class nvrNode {
         ofVideoGrabber videoGrabber;
         ofMatrix4x4 mappingMatrix;
 
+        // FLOW
+        ofFbo bufferFlow;
+        float lastTime;
+        float deltaTime;
+        flowTools::ftOpticalFlow opticalFlow;
+        flowTools::ftVelocityMask velocityMask;
+        flowTools::ftFluidSimulation fluid;
+        flowTools::ftVelocityField velocityField;
+        void drawOpticalFlow();
+
         // GUI
         void				setupGui();
+        void				updateValues();
 	    ofParameterGroup	parameters;
 	    ofParameterGroup	inputParameters;
 	    ofParameterGroup	outputParameters;

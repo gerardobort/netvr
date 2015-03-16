@@ -18,20 +18,13 @@ void ofApp::setup(){
     ofSetWindowTitle("netvr - prototype dashboard");
 
     bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
-    bufferFlow.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
     bufferRoom.allocate(600, 400, GL_RGBA);
     roomMapping.load("shaders/mapping");
     roomCamera.setPosition(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_WIDTH+INT_ROOM_HEIGHT));
     roomCamera.setTarget(ofVec3f(0, INT_ROOM_HEIGHT/2.0, 0));
     roomCamera.setDistance(INT_ROOM_WIDTH+INT_ROOM_HEIGHT);
 
-    opticalFlow.setup(INT_ROOM_WIDTH/4.0, INT_ROOM_DEPTH/4.0);
-    velocityMask.setup(INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-    fluid.setup(INT_ROOM_DEPTH/4.0, INT_ROOM_DEPTH/4.0, INT_ROOM_WIDTH, INT_ROOM_DEPTH, false);
-    velocityField.allocate(INT_ROOM_WIDTH/16.0, INT_ROOM_DEPTH/16.0);
-
     lastTime = ofGetElapsedTimef();
-    guipShowFlow = true;
     activeCamera = 0;
 
 	setupGui();
@@ -39,10 +32,8 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    didCamsUpdate = false;
     for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
         nodes[i]->update();
-        didCamsUpdate = didCamsUpdate || nodes[i]->videoGrabber.isFrameNew();
     }
 
     deltaTime = ofGetElapsedTimef() - lastTime;
@@ -57,7 +48,6 @@ void ofApp::draw(){
 
     drawCameras();
     drawProjections();
-    drawOpticalFlow();
     drawRoom();
     gui.draw();
     
@@ -65,7 +55,7 @@ void ofApp::draw(){
 
 void ofApp::drawCameras(){
     for (int i= 0 ; i < guipNodesAmount; i++) {
-        int w = 600/guipNodesAmount, h = 400, x = 600 + i*w, y = 0;
+        int w = 1200/guipNodesAmount, h = 400, x = 0 + i*w, y = 400;
         ofEnableAlphaBlending();
         ofEnableBlendMode(OF_BLENDMODE_ALPHA);
         ofNoFill();
@@ -86,46 +76,15 @@ void ofApp::drawProjections(){
         ofBackground(0);
         for (int i= 0 ; i < guipNodesAmount; i++)
             if (i == activeCamera - 1 || !activeCamera)
-                nodes[i]->bufferOutput.draw((guipFlipCamsHorizontally ? INT_ROOM_WIDTH : 0), 0, (guipFlipCamsHorizontally ? -1 : 1) * INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+                nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
         ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         ofDisableAlphaBlending();
     bufferProjections.end();
-    bufferProjections.draw(600, 400, 600, 400);
+    bufferProjections.draw(600, 0, 600, 400);
 
     reportStream.str(""); reportStream.clear();
     reportStream << "outputs projection" << endl;
-    ofDrawBitmapString(reportStream.str(), 600 +10, 400 +20);
-}
-
-void ofApp::drawOpticalFlow(){
-    if (didCamsUpdate) {
-        opticalFlow.setSource(bufferProjections.getTextureReference());
-        opticalFlow.update(deltaTime);
-        velocityMask.setDensity(bufferProjections.getTextureReference());
-        velocityMask.setVelocity(opticalFlow.getOpticalFlow());
-        velocityMask.update();
-        fluid.addVelocity(opticalFlow.getOpticalFlowDecay());
-        fluid.addDensity(velocityMask.getColorMask());
-        fluid.addTemperature(velocityMask.getLuminanceMask());
-        fluid.update();
-    }
-    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
-    velocityField.setSource(fluid.getVelocity());
-    ofEnableAlphaBlending();
-    bufferFlow.begin();
-        ofClear(0, 0, 0, 0);
-        ofSetBackgroundColor(255, 0, 0, 0);
-        ofEnableBlendMode(OF_BLENDMODE_ADD);
-        velocityField.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-        ofDisableBlendMode();
-    bufferFlow.end();
-    bufferFlow.draw(0, 400, 600, 400);
-    ofDisableAlphaBlending();
-
-    reportStream.str(""); reportStream.clear();
-    reportStream << "optical flow" << endl;
-    ofDrawBitmapString(reportStream.str(), 0 +10, 400 +20);
+    ofDrawBitmapString(reportStream.str(), 600 +10, 0 +20);
 }
 
 void ofApp::drawRoom(){
@@ -174,10 +133,8 @@ void ofApp::drawRoom(){
     roomWireframe.addColor(ofColor(0, 100, 0));
     roomWireframe.addColor(ofColor(0, 100, 0));
 
-    if (guipShowFlow)
-        bufferFlow.getTextureReference().bind();
-    else
-        bufferProjections.getTextureReference().bind();
+    bufferProjections.getTextureReference().bind();
+
     bufferRoom.begin();
         ofBackground(0);
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
@@ -197,7 +154,7 @@ void ofApp::drawRoom(){
     bufferRoom.draw(0, 0);
 
     reportStream.str(""); reportStream.clear();
-    reportStream << "3d room [press 'f' to toggle view]" << endl;
+    reportStream << "3d room" << endl;
     ofDrawBitmapString(reportStream.str(), 0 +10, 0 +20);
 }
 
@@ -236,12 +193,6 @@ void ofApp::listCameraDevices(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	switch (key) {
-		case 'f':
-            guipShowFlow = !guipShowFlow;
-			break;
-	}
-
     if (isdigit(key)) {
         activeCamera = key -48;
     }
@@ -264,31 +215,14 @@ void ofApp::setupGui() {
 
 	prototypeParameters.setName("Prototype Params");
 	prototypeParameters.add(guipNodesAmount.set("Amount of Nodes", 2, 1, INT_NODES_AMOUNT));
-	prototypeParameters.add(guipFlipCamsHorizontally.set("Flip Cams Horizontally", false));
-	prototypeParameters.add(guipShowFlow.set("Flow Enabled", false));
 	gui.add(prototypeParameters);
 	
-	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
-	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
-	guiColorSwitch = 1 - guiColorSwitch;
-	gui.add(opticalFlow.parameters);
-	
-	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
-	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
-	guiColorSwitch = 1 - guiColorSwitch;
-	gui.add(velocityMask.parameters);
-	
-	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
-	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
-	guiColorSwitch = 1 - guiColorSwitch;
-	gui.add(fluid.parameters);
-
-	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
-	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
-	guiColorSwitch = 1 - guiColorSwitch;
-
-    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
+    for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
+        gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
+        gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
+        guiColorSwitch = 1 - guiColorSwitch;
         gui.add(nodes[i]->parameters);
+    }
 	
 	gui.loadFromFile("settings.xml");
 	gui.minimizeAll();

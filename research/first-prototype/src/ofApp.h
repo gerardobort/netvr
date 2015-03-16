@@ -21,7 +21,6 @@ class ofApp : public ofBaseApp{
         void draw();
         void drawCameras();
         void drawProjections();
-        void drawOpticalFlow();
         void drawRoom();
         void exit();
 		void mouseDragged(int x, int y, int button);
@@ -33,7 +32,6 @@ class ofApp : public ofBaseApp{
 
         nvrNode *nodes[INT_NODES_AMOUNT];
         ofFbo bufferProjections;
-        ofFbo bufferFlow;
         ofFbo bufferRoom;
         ofEasyCam roomCamera;
         ofShader roomMapping;
@@ -41,19 +39,11 @@ class ofApp : public ofBaseApp{
         float lastTime;
         float deltaTime;
 
-        flowTools::ftOpticalFlow opticalFlow;
-        flowTools::ftVelocityMask velocityMask;
-        flowTools::ftFluidSimulation fluid;
-        flowTools::ftVelocityField velocityField;
-
-        bool didCamsUpdate;
         int activeCamera;
 
         // GUI
         ofxPanel			gui;
         void				setupGui();
-        ofParameter<bool>	guipShowFlow;
-        ofParameter<bool>	guipFlipCamsHorizontally;
         ofParameter<int>	guipNodesAmount;
 	    ofParameterGroup	prototypeParameters;
 };

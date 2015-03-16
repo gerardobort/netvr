@@ -12,20 +12,29 @@ nvrNode::nvrNode(int cameraWidth, int cameraHeight, int deviceId, int number)
     inputCorners[2].set(cameraWidth - cameraWidth/5.0, cameraHeight - cameraHeight/5.0);
     inputCorners[3].set(cameraWidth/5.0, cameraHeight - cameraHeight/5.0);
 
+    outputCorners[0].set(0, 0);
+    outputCorners[1].set(cameraWidth, 0);
+    outputCorners[2].set(cameraWidth, cameraHeight);
+    outputCorners[3].set(0, cameraHeight);
+
     if (deviceId) {
         videoGrabber.setDeviceID(deviceId);
         cout << "************** camera device IN USE: " << deviceId << endl;
     }
     videoGrabber.initGrabber(cameraWidth, cameraHeight);
 
-    outputCorners[0].set(0, 0);
-    outputCorners[1].set(cameraWidth, 0);
-    outputCorners[2].set(cameraWidth, cameraHeight);
-    outputCorners[3].set(0, cameraHeight);
+    opticalFlow.setup(cameraWidth/4.0, cameraHeight/4.0);
+    velocityMask.setup(cameraWidth, cameraHeight);
+    fluid.setup(cameraWidth/4.0, cameraHeight/4.0, cameraWidth, cameraHeight, false);
+    velocityField.allocate(cameraWidth/16.0, cameraHeight/16.0);
+    lastTime = ofGetElapsedTimef();
 
     bufferInput.allocate(cameraWidth, cameraHeight, GL_RGBA);
     bufferOutput.allocate(cameraWidth, cameraHeight, GL_RGBA);
+    bufferFlow.allocate(cameraWidth, cameraHeight, GL_RGBA);
     setupGui();
+
+    updateValues();
 }
 
 //--------------------------------------------------------------
@@ -34,13 +43,21 @@ nvrNode::~nvrNode(){
 
 //--------------------------------------------------------------
 void nvrNode::update(){
+
+    deltaTime = ofGetElapsedTimef() - lastTime;
+    lastTime = ofGetElapsedTimef();
+
     videoGrabber.update();
     mappingMatrix = ofxHomography::findHomography(inputCorners, outputCorners);
 
     bufferInput.begin();
         ofClear(0);
         ofBackground(0);
-        videoGrabber.draw(0, 0, cameraWidth, cameraHeight);
+        if (guipFlipCamsHorizontally.get())
+            videoGrabber.draw(cameraWidth, 0, -cameraWidth, cameraHeight);
+        else
+            videoGrabber.draw(0, 0, cameraWidth, cameraHeight);
+    
     bufferInput.end();
 
     bufferOutput.begin();
@@ -106,11 +123,8 @@ void nvrNode::draw(int x, int y, int width, int height){
 
     ofSetColor(255); // color fix
 
-    bufferInput.draw(drawX, drawY, drawWidth, drawHeight/2.0);
-    if (guipFlipCamsHorizontally)
-        bufferOutput.draw(drawX, drawY + drawHeight/2.0, drawWidth, drawHeight/2.0);
-    else
-        bufferOutput.draw(drawX + drawWidth, drawY + drawHeight/2.0, -drawWidth, drawHeight/2.0);
+    bufferInput.draw(drawX, drawY, drawWidth, drawHeight/3.0);
+    bufferOutput.draw(drawX, drawY + drawHeight/3.0, drawWidth, drawHeight/3.0);
 
     reportStream.str(""); reportStream.clear();
     reportStream << "input stream" << endl;
@@ -118,9 +132,45 @@ void nvrNode::draw(int x, int y, int width, int height){
 
     reportStream.str(""); reportStream.clear();
     reportStream << "output stream" << endl;
-    ofDrawBitmapString(reportStream.str(), drawX +10, drawY + drawHeight/2.0 +20);
+    ofDrawBitmapString(reportStream.str(), drawX +10, drawY + drawHeight/3.0 +20);
+
+    drawOpticalFlow();
+    reportStream.str(""); reportStream.clear();
+    reportStream << "flow stream" << endl;
+    ofDrawBitmapString(reportStream.str(), drawX +10, drawY + 2.0*drawHeight/3.0 +20);
 }
 
+//--------------------------------------------------------------
+void nvrNode::drawOpticalFlow(){
+    if (videoGrabber.isFrameNew()) {
+        opticalFlow.setSource(bufferOutput.getTextureReference());
+        opticalFlow.update(deltaTime);
+        velocityMask.setDensity(bufferOutput.getTextureReference());
+        velocityMask.setVelocity(opticalFlow.getOpticalFlow());
+        velocityMask.update();
+        fluid.addVelocity(opticalFlow.getOpticalFlowDecay());
+        fluid.addDensity(velocityMask.getColorMask());
+        fluid.addTemperature(velocityMask.getLuminanceMask());
+        fluid.update();
+    }
+    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
+    velocityField.setSource(fluid.getVelocity());
+    ofEnableAlphaBlending();
+    bufferFlow.begin();
+        ofClear(0, 0, 0, 0);
+        ofSetBackgroundColor(255, 0, 0, 0);
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        velocityField.draw(0, 0, cameraWidth, cameraHeight);
+        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+        ofDisableBlendMode();
+    bufferFlow.end();
+    bufferFlow.draw(drawX, drawY + 2.0*drawHeight/3.0, drawWidth, 2.0*drawHeight/3.0);
+    ofDisableAlphaBlending();
+
+    reportStream.str(""); reportStream.clear();
+    reportStream << "optical flow" << endl;
+    ofDrawBitmapString(reportStream.str(), 0 +10, 400 +20);
+}
 
 //--------------------------------------------------------------
 void nvrNode::mouseDragged(int x, int y, int button){
@@ -135,16 +185,18 @@ void nvrNode::mouseDragged(int x, int y, int button){
     y -= drawY;
 
     ofPoint *pointSet;
-    if (y < drawHeight/2.0) {
+    if (y < drawHeight/3.0) {
         pointSet = &inputCorners[0];
-    } else {
+    } else if (y < 2.0*drawHeight/3.0) {
         pointSet = &outputCorners[0];
-        y -= drawHeight/2.0;
+        y -= drawHeight/3.0;
+    } else {
+        return;
     }
 
     int dMin = cameraWidth * cameraHeight;
     int jMin = INT_CORNERS_AMOUNT;
-    ofPoint mousePoint = ofPoint(x*sx, 2.0*y*sy);
+    ofPoint mousePoint = ofPoint(x*sx, 3.0*y*sy);
     for (int j = 0; j < INT_CORNERS_AMOUNT; j++) {
         int distance = mousePoint.distance(pointSet[j]);
         if (distance < dMin) {
@@ -153,7 +205,10 @@ void nvrNode::mouseDragged(int x, int y, int button){
         }
     }
     pointSet[jMin].set(mousePoint.x, mousePoint.y);
+    updateValues();
+}
 
+void nvrNode::updateValues(){
     // refresh GUI vars
     guipInputCorners0x = inputCorners[0].x;
     guipInputCorners0y = inputCorners[0].y;
@@ -219,4 +274,8 @@ void nvrNode::setupGui() {
 	guipOutputCorners3x.addListener(this, &nvrNode::setOutputCorners3x);
 	guipOutputCorners3y.addListener(this, &nvrNode::setOutputCorners3y);
     parameters.add(outputParameters);
+
+	parameters.add(opticalFlow.parameters);
+	parameters.add(velocityMask.parameters);
+	parameters.add(fluid.parameters);
 }
