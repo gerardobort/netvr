@@ -10,10 +10,10 @@ void ofApp::setup(){
 
     listCameraDevices();
     
-    nodes[0] = new nvrNode(720, 480, 0);
-    nodes[1] = new nvrNode(720, 480, 0);
+    nodes[0] = new nvrNode(720, 480, 0, 0);
+    nodes[1] = new nvrNode(720, 480, 0, 1);
     for (int i= 2 ; i < INT_NODES_AMOUNT; i++)
-        nodes[i] = new nvrNode(320, 240);
+        nodes[i] = new nvrNode(320, 240, 0, i);
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
@@ -282,6 +282,13 @@ void ofApp::setupGui() {
 	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
 	guiColorSwitch = 1 - guiColorSwitch;
 	gui.add(fluid.parameters);
+
+	gui.setDefaultHeaderBackgroundColor(guiHeaderColor[guiColorSwitch]);
+	gui.setDefaultFillColor(guiFillColor[guiColorSwitch]);
+	guiColorSwitch = 1 - guiColorSwitch;
+
+    for (int i= 0 ; i < INT_NODES_AMOUNT; i++)
+        gui.add(nodes[i]->parameters);
 	
 	gui.loadFromFile("settings.xml");
 	gui.minimizeAll();

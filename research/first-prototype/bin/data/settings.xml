@@ -52,7 +52,8 @@
 	</visualisation>
 <settings/>
 <Prototype_Params>
-		<Flow_Enabled>0</Flow_Enabled>
-		<Amount_of_Nodes>2</Amount_of_Nodes>
+		<Flow_Enabled>1</Flow_Enabled>
+		<Amount_of_Nodes>4</Amount_of_Nodes>
+	<Flip_Cams_Horizontally>1</Flip_Cams_Horizontally>
 	</Prototype_Params>
 </settings>
