@@ -6,6 +6,7 @@
 #include "ofxFlowTools.h"
 #include "nvrNode.h"
 #include "ofxGui.h"
+#include "ofxAssimpModelLoader.h"
 
 #define M_PI 3.1415926535897932384626433832795
 #define INT_NODES_AMOUNT 6
@@ -46,4 +47,7 @@ class ofApp : public ofBaseApp{
         void				setupGui();
         ofParameter<int>	guipNodesAmount;
 	    ofParameterGroup	prototypeParameters;
+
+
+        ofxAssimpModelLoader model;
 };

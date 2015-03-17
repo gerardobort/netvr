@@ -28,6 +28,15 @@ void ofApp::setup(){
     activeCamera = 0;
 
 	setupGui();
+
+
+    model.enableColors();
+    model.enableMaterials();
+    model.enableNormals();
+    model.enableTextures();
+    //model.loadModel("models/OBJ/spider.obj", true);
+    //model.loadModel("models/Collada/duck.dae", true);
+    model.loadModel("models/man/Man N070315.3DS", true);
 }
 
 //--------------------------------------------------------------
@@ -133,21 +142,31 @@ void ofApp::drawRoom(){
     roomWireframe.addColor(ofColor(0, 100, 0));
     roomWireframe.addColor(ofColor(0, 100, 0));
 
-    bufferProjections.getTextureReference().bind();
 
     bufferRoom.begin();
         ofBackground(0);
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
             ofEnableDepthTest();
+            glShadeModel(GL_SMOOTH); 
             ofPushMatrix();
             ofTranslate(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0);
+            bufferProjections.getTextureReference().bind();
             roomMapping.begin();
             room.drawFaces();
             roomMapping.end();
+            bufferProjections.getTextureReference().unbind();
             roomWireframe.drawWireframe();
             glPointSize(4);
             roomWireframe.drawVertices();
             ofPopMatrix();
+
+            ofEnableSeparateSpecularLight();
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+            ofPushMatrix();
+            model.setPosition(0, 0, 0);
+            model.setScale(0.5, -0.5, 0.5);
+            ofPopMatrix();
+            model.drawFaces();
             ofDisableDepthTest();
         roomCamera.end();
     bufferRoom.end();
