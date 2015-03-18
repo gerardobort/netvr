@@ -220,13 +220,25 @@ void nvrNode::setupGui() {
     char name[100];
     sprintf(name, "Node %d", number);
 	parameters.setName(name);
-	parameters.add(guipShowFlow.set("Flow Enabled", false));
-	parameters.add(guipFlipCamsHorizontally.set("Flip Cams Horizontally", false));
 
-	parameters.add(guipTargetPosition.set("target position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
-	parameters.add(guipTargetNormal.set("target normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
-	parameters.add(guipCameraPosition.set("camera position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
-	parameters.add(guipCameraNormal.set("camera normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+    // device selection
+	deviceParameters.setName("device");
+    ofVideoGrabber tvid;
+    vector<ofVideoDevice> allCameras;
+    allCameras = tvid.listDevices();
+	deviceParameters.add(guipDeviceId.set("device", deviceId, 0, allCameras.size()-1));
+	guipDeviceId.addListener(this, &nvrNode::setDeviceId);
+	deviceParameters.add(guipCanvasSize.set("canvas size", ofPoint(720, 480), ofPoint(0), ofPoint(720, 480)));
+	guipCanvasSize.addListener(this, &nvrNode::setCanvasSize);
+	deviceParameters.add(guipFlipCamsHorizontally.set("Flip Cams Horizontally", false));
+	parameters.add(deviceParameters);
+
+	mappingParameters.setName("mapping");
+	mappingParameters.add(guipShowFlow.set("Flow Enabled", false));
+	mappingParameters.add(guipTargetPosition.set("target position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	mappingParameters.add(guipTargetNormal.set("target normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	mappingParameters.add(guipCameraPosition.set("camera position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	mappingParameters.add(guipCameraNormal.set("camera normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
 
 	inputParameters.setName("input");
 	inputParameters.add(guipInputCorners0.set("i[0]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
@@ -237,7 +249,7 @@ void nvrNode::setupGui() {
 	guipInputCorners2.addListener(this, &nvrNode::setInputCorners2);
 	inputParameters.add(guipInputCorners3.set("i[3]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
 	guipInputCorners3.addListener(this, &nvrNode::setInputCorners3);
-    parameters.add(inputParameters);
+    mappingParameters.add(inputParameters);
 
 	outputParameters.setName("output");
 	outputParameters.add(guipOutputCorners0.set("o[0]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
@@ -248,8 +260,9 @@ void nvrNode::setupGui() {
 	guipOutputCorners2.addListener(this, &nvrNode::setOutputCorners2);
 	outputParameters.add(guipOutputCorners3.set("o[3]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
 	guipOutputCorners3.addListener(this, &nvrNode::setOutputCorners3);
-    parameters.add(outputParameters);
+    mappingParameters.add(outputParameters);
 
+	parameters.add(mappingParameters);
 	parameters.add(opticalFlow.parameters);
 	//parameters.add(velocityMask.parameters);
 	//parameters.add(fluid.parameters);

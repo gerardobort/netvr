@@ -57,11 +57,18 @@ class nvrNode {
         void				setupGui();
         void				updateValues();
 	    ofParameterGroup	parameters;
-	    ofParameterGroup	inputParameters;
-	    ofParameterGroup	outputParameters;
         ofParameter<bool>	guipShowFlow;
+
+	    ofParameterGroup	deviceParameters;
+        ofParameter<int> guipDeviceId;
+	    void setDeviceId(int& _value) { videoGrabber.setDeviceID(_value); videoGrabber.initGrabber(cameraWidth, cameraHeight); }
+        ofParameter<ofVec2f> guipCanvasSize;
+	    void setCanvasSize(ofVec2f& _value) { cameraWidth = _value.x; cameraHeight = _value.y; }
         ofParameter<bool>	guipFlipCamsHorizontally;
 
+	    ofParameterGroup	mappingParameters;
+
+	    ofParameterGroup	inputParameters;
         ofParameter<ofVec2f> guipInputCorners0;
 	    void setInputCorners0(ofVec2f& _value) { inputCorners[0] = ofPoint(_value); }
         ofParameter<ofVec2f> guipInputCorners1;
@@ -71,6 +78,7 @@ class nvrNode {
         ofParameter<ofVec2f> guipInputCorners3;
 	    void setInputCorners3(ofVec2f& _value) { inputCorners[3] = ofPoint(_value); }
 
+	    ofParameterGroup	outputParameters;
         ofParameter<ofVec2f> guipOutputCorners0;
 	    void setOutputCorners0(ofVec2f& _value) { outputCorners[0] = ofPoint(_value); }
         ofParameter<ofVec2f> guipOutputCorners1;
@@ -84,4 +92,5 @@ class nvrNode {
         ofParameter<ofVec3f>	guipTargetNormal;
         ofParameter<ofVec3f>	guipCameraPosition;
         ofParameter<ofVec3f>	guipCameraNormal;
+
 };
