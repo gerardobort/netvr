@@ -9,6 +9,10 @@
 
 #define INT_CORNERS_AMOUNT 5
 
+#define INT_ROOM_WIDTH 800
+#define INT_ROOM_HEIGHT 200
+#define INT_ROOM_DEPTH 600
+
 class nvrNode {
 
     public:
@@ -58,37 +62,26 @@ class nvrNode {
         ofParameter<bool>	guipShowFlow;
         ofParameter<bool>	guipFlipCamsHorizontally;
 
-        ofParameter<int>	guipInputCorners0x;
-        ofParameter<int>	guipInputCorners0y;
-	    void setInputCorners0x(int& _value) { inputCorners[0].x = _value; }
-	    void setInputCorners0y(int& _value) { inputCorners[0].y = _value; }
-        ofParameter<int>	guipInputCorners1x;
-        ofParameter<int>	guipInputCorners1y;
-	    void setInputCorners1x(int& _value) { inputCorners[1].x = _value; }
-	    void setInputCorners1y(int& _value) { inputCorners[1].y = _value; }
-        ofParameter<int>	guipInputCorners2x;
-        ofParameter<int>	guipInputCorners2y;
-	    void setInputCorners2x(int& _value) { inputCorners[2].x = _value; }
-	    void setInputCorners2y(int& _value) { inputCorners[2].y = _value; }
-        ofParameter<int>	guipInputCorners3x;
-        ofParameter<int>	guipInputCorners3y;
-	    void setInputCorners3x(int& _value) { inputCorners[3].x = _value; }
-	    void setInputCorners3y(int& _value) { inputCorners[3].y = _value; }
+        ofParameter<ofVec2f> guipInputCorners0;
+	    void setInputCorners0(ofVec2f& _value) { inputCorners[0] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipInputCorners1;
+	    void setInputCorners1(ofVec2f& _value) { inputCorners[1] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipInputCorners2;
+	    void setInputCorners2(ofVec2f& _value) { inputCorners[2] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipInputCorners3;
+	    void setInputCorners3(ofVec2f& _value) { inputCorners[3] = ofPoint(_value); }
 
-        ofParameter<int>	guipOutputCorners0x;
-        ofParameter<int>	guipOutputCorners0y;
-	    void setOutputCorners0x(int& _value) { outputCorners[0].x = _value; }
-	    void setOutputCorners0y(int& _value) { outputCorners[0].y = _value; }
-        ofParameter<int>	guipOutputCorners1x;
-        ofParameter<int>	guipOutputCorners1y;
-	    void setOutputCorners1x(int& _value) { outputCorners[1].x = _value; }
-	    void setOutputCorners1y(int& _value) { outputCorners[1].y = _value; }
-        ofParameter<int>	guipOutputCorners2x;
-        ofParameter<int>	guipOutputCorners2y;
-	    void setOutputCorners2x(int& _value) { outputCorners[2].x = _value; }
-	    void setOutputCorners2y(int& _value) { outputCorners[2].y = _value; }
-        ofParameter<int>	guipOutputCorners3x;
-        ofParameter<int>	guipOutputCorners3y;
-	    void setOutputCorners3x(int& _value) { outputCorners[3].x = _value; }
-	    void setOutputCorners3y(int& _value) { outputCorners[3].y = _value; }
+        ofParameter<ofVec2f> guipOutputCorners0;
+	    void setOutputCorners0(ofVec2f& _value) { outputCorners[0] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipOutputCorners1;
+	    void setOutputCorners1(ofVec2f& _value) { outputCorners[1] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipOutputCorners2;
+	    void setOutputCorners2(ofVec2f& _value) { outputCorners[2] = ofPoint(_value); }
+        ofParameter<ofVec2f> guipOutputCorners3;
+	    void setOutputCorners3(ofVec2f& _value) { outputCorners[3] = ofPoint(_value); }
+
+        ofParameter<ofVec3f>	guipTargetPosition;
+        ofParameter<ofVec3f>	guipTargetNormal;
+        ofParameter<ofVec3f>	guipCameraPosition;
+        ofParameter<ofVec3f>	guipCameraNormal;
 };

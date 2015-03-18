@@ -166,10 +166,6 @@ void nvrNode::drawOpticalFlow(){
     bufferFlow.end();
     bufferFlow.draw(drawX, drawY + 2.0*drawHeight/3.0, drawWidth, 2.0*drawHeight/3.0);
     ofDisableAlphaBlending();
-
-    reportStream.str(""); reportStream.clear();
-    reportStream << "optical flow" << endl;
-    ofDrawBitmapString(reportStream.str(), 0 +10, 400 +20);
 }
 
 //--------------------------------------------------------------
@@ -210,22 +206,14 @@ void nvrNode::mouseDragged(int x, int y, int button){
 
 void nvrNode::updateValues(){
     // refresh GUI vars
-    guipInputCorners0x = inputCorners[0].x;
-    guipInputCorners0y = inputCorners[0].y;
-    guipInputCorners1x = inputCorners[1].x;
-    guipInputCorners1y = inputCorners[1].y;
-    guipInputCorners2x = inputCorners[2].x;
-    guipInputCorners2y = inputCorners[2].y;
-    guipInputCorners3x = inputCorners[3].x;
-    guipInputCorners3y = inputCorners[3].y;
-    guipOutputCorners0x = outputCorners[0].x;
-    guipOutputCorners0y = outputCorners[0].y;
-    guipOutputCorners1x = outputCorners[1].x;
-    guipOutputCorners1y = outputCorners[1].y;
-    guipOutputCorners2x = outputCorners[2].x;
-    guipOutputCorners2y = outputCorners[2].y;
-    guipOutputCorners3x = outputCorners[3].x;
-    guipOutputCorners3y = outputCorners[3].y;
+    guipInputCorners0 = inputCorners[0];
+    guipInputCorners1 = inputCorners[1];
+    guipInputCorners2 = inputCorners[2];
+    guipInputCorners3 = inputCorners[3];
+    guipOutputCorners0 = outputCorners[0];
+    guipOutputCorners1 = outputCorners[1];
+    guipOutputCorners2 = outputCorners[2];
+    guipOutputCorners3 = outputCorners[3];
 }
 
 void nvrNode::setupGui() {
@@ -235,47 +223,34 @@ void nvrNode::setupGui() {
 	parameters.add(guipShowFlow.set("Flow Enabled", false));
 	parameters.add(guipFlipCamsHorizontally.set("Flip Cams Horizontally", false));
 
-	inputParameters.setName("Input");
-	inputParameters.add(guipInputCorners0x.set("i[0].x", 0, 0, cameraWidth ));
-	inputParameters.add(guipInputCorners0y.set("i[0].y", 0, 0, cameraHeight));
-	guipInputCorners0x.addListener(this, &nvrNode::setInputCorners0x);
-	guipInputCorners0y.addListener(this, &nvrNode::setInputCorners0y);
-	inputParameters.add(guipInputCorners1x.set("i[1].x", 0, 0, cameraWidth ));
-	inputParameters.add(guipInputCorners1y.set("i[1].y", 0, 0, cameraHeight));
-	guipInputCorners1x.addListener(this, &nvrNode::setInputCorners1x);
-	guipInputCorners1y.addListener(this, &nvrNode::setInputCorners1y);
-	inputParameters.add(guipInputCorners2x.set("i[2].x", 0, 0, cameraWidth ));
-	inputParameters.add(guipInputCorners2y.set("i[2].y", 0, 0, cameraHeight));
-	guipInputCorners2x.addListener(this, &nvrNode::setInputCorners2x);
-	guipInputCorners2y.addListener(this, &nvrNode::setInputCorners2y);
-	inputParameters.add(guipInputCorners3x.set("i[3].x", 0, 0, cameraWidth ));
-	inputParameters.add(guipInputCorners3y.set("i[3].y", 0, 0, cameraHeight));
-	guipInputCorners3x.addListener(this, &nvrNode::setInputCorners3x);
-	guipInputCorners3y.addListener(this, &nvrNode::setInputCorners3y);
+	parameters.add(guipTargetPosition.set("target position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	parameters.add(guipTargetNormal.set("target normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	parameters.add(guipCameraPosition.set("camera position", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
+	parameters.add(guipCameraNormal.set("camera normal", ofVec3f(0,0,0), ofVec3f(-INT_ROOM_WIDTH, -INT_ROOM_DEPTH, -INT_ROOM_HEIGHT), ofVec3f(INT_ROOM_WIDTH, INT_ROOM_DEPTH, INT_ROOM_HEIGHT)));
 
-
+	inputParameters.setName("input");
+	inputParameters.add(guipInputCorners0.set("i[0]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipInputCorners0.addListener(this, &nvrNode::setInputCorners0);
+	inputParameters.add(guipInputCorners1.set("i[1]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipInputCorners1.addListener(this, &nvrNode::setInputCorners1);
+	inputParameters.add(guipInputCorners2.set("i[2]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipInputCorners2.addListener(this, &nvrNode::setInputCorners2);
+	inputParameters.add(guipInputCorners3.set("i[3]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipInputCorners3.addListener(this, &nvrNode::setInputCorners3);
     parameters.add(inputParameters);
 
-	outputParameters.setName("Output");
-	outputParameters.add(guipOutputCorners0x.set("o[0].x", 0, 0, cameraWidth));
-	outputParameters.add(guipOutputCorners0y.set("o[0].y", 0, 0, cameraHeight));
-	guipOutputCorners0x.addListener(this, &nvrNode::setOutputCorners0x);
-	guipOutputCorners0y.addListener(this, &nvrNode::setOutputCorners0y);
-	outputParameters.add(guipOutputCorners1x.set("o[1].x", 0, 0, cameraWidth));
-	outputParameters.add(guipOutputCorners1y.set("o[1].y", 0, 0, cameraHeight));
-	guipOutputCorners1x.addListener(this, &nvrNode::setOutputCorners1x);
-	guipOutputCorners1y.addListener(this, &nvrNode::setOutputCorners1y);
-	outputParameters.add(guipOutputCorners2x.set("o[2].x", 0, 0, cameraWidth));
-	outputParameters.add(guipOutputCorners2y.set("o[2].y", 0, 0, cameraHeight));
-	guipOutputCorners2x.addListener(this, &nvrNode::setOutputCorners2x);
-	guipOutputCorners2y.addListener(this, &nvrNode::setOutputCorners2y);
-	outputParameters.add(guipOutputCorners3x.set("o[3].x", 0, 0, cameraWidth));
-	outputParameters.add(guipOutputCorners3y.set("o[3].y", 0, 0, cameraHeight));
-	guipOutputCorners3x.addListener(this, &nvrNode::setOutputCorners3x);
-	guipOutputCorners3y.addListener(this, &nvrNode::setOutputCorners3y);
+	outputParameters.setName("output");
+	outputParameters.add(guipOutputCorners0.set("o[0]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipOutputCorners0.addListener(this, &nvrNode::setOutputCorners0);
+	outputParameters.add(guipOutputCorners1.set("o[1]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipOutputCorners1.addListener(this, &nvrNode::setOutputCorners1);
+	outputParameters.add(guipOutputCorners2.set("o[2]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipOutputCorners2.addListener(this, &nvrNode::setOutputCorners2);
+	outputParameters.add(guipOutputCorners3.set("o[3]", ofPoint(0), ofPoint(0), ofPoint(cameraWidth, cameraHeight)));
+	guipOutputCorners3.addListener(this, &nvrNode::setOutputCorners3);
     parameters.add(outputParameters);
 
 	parameters.add(opticalFlow.parameters);
-	parameters.add(velocityMask.parameters);
-	parameters.add(fluid.parameters);
+	//parameters.add(velocityMask.parameters);
+	//parameters.add(fluid.parameters);
 }

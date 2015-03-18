@@ -11,6 +11,7 @@ void ofApp::setup(){
     listCameraDevices();
     
     nodes[0] = new nvrNode(720, 480, 0, 0);
+    //nodes[1] = new nvrNode(320, 200, 0, 1);
     nodes[1] = new nvrNode(720, 480, 0, 1);
     for (int i= 2 ; i < INT_NODES_AMOUNT; i++)
         nodes[i] = new nvrNode(320, 240, 0, i);
@@ -161,13 +162,35 @@ void ofApp::drawRoom(){
             ofPopMatrix();
 
             ofEnableSeparateSpecularLight();
-            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             ofPushMatrix();
             model.setPosition(0, 0, 0);
             model.setScale(0.5, -0.5, 0.5);
             ofPopMatrix();
             model.drawFaces();
             ofDisableDepthTest();
+
+
+            ofSpherePrimitive sphere;
+            for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
+                ofPushStyle();
+                ofSetColor(200, 0, 0);
+                sphere.setRadius(10);
+                sphere.setPosition(nodes[i]->guipTargetPosition);
+                sphere.draw();
+                ofPopStyle();
+                ofPushStyle();
+                ofSetColor(0, 200, 0);
+                sphere.setRadius(20);
+                sphere.setPosition(nodes[i]->guipCameraPosition);
+                sphere.draw();
+                ofPopStyle();
+                ofPushStyle();
+                ofSetColor(0, 0, 200);
+                ofLine(nodes[i]->guipCameraPosition, nodes[i]->guipTargetPosition);
+                ofPopStyle();
+            }
+
         roomCamera.end();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
