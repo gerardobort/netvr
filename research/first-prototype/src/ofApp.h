@@ -30,6 +30,7 @@ class ofApp : public ofBaseApp{
         void keyPressed(int key);
 
         stringstream reportStream;
+        ofShader mappingShader;
 
         nvrNode *nodes[INT_NODES_AMOUNT];
         ofFbo bufferProjections;

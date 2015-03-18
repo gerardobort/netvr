@@ -53,7 +53,7 @@
 <settings/>
 <Prototype_Params>
 		<Flow_Enabled>1</Flow_Enabled>
-		<Amount_of_Nodes>4</Amount_of_Nodes>
+		<Amount_of_Nodes>2</Amount_of_Nodes>
 	<Flip_Cams_Horizontally>1</Flip_Cams_Horizontally>
 	</Prototype_Params>
 <Node_0>
@@ -143,6 +143,30 @@
 			<o_2_>720, 480</o_2_>
 			<o_3_>0, 480</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 179.257, -200</target_position>
+			<target_normal>-0.00935835, -0.742471, 0.638756</target_normal>
+			<camera_position>0, 90.0084, 200</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>144, 96</i_0_>
+				<i_1_>576, 96</i_1_>
+				<i_2_>576, 384</i_2_>
+				<i_3_>144, 384</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>720, 0</o_1_>
+				<o_2_>720, 480</o_2_>
+				<o_3_>0, 480</o_3_>
+			</output>
+		</mapping>
 	</Node_0>
 	<Node_1>
 		<Flow_Enabled>0</Flow_Enabled>
@@ -231,6 +255,30 @@
 			<o_2_>720, 480</o_2_>
 			<o_3_>0, 480</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 19.8846, -110.245</target_position>
+			<target_normal>0.0437658, 1, 0.723755</target_normal>
+			<camera_position>0, 83.6335, 200</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>144, 96</i_0_>
+				<i_1_>576, 96</i_1_>
+				<i_2_>576, 384</i_2_>
+				<i_3_>144, 384</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>720, 0</o_1_>
+				<o_2_>720, 480</o_2_>
+				<o_3_>0, 480</o_3_>
+			</output>
+		</mapping>
 	</Node_1>
 	<Node_2>
 		<Flow_Enabled>0</Flow_Enabled>
@@ -319,6 +367,30 @@
 			<o_2_>320, 240</o_2_>
 			<o_3_>0, 240</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 0, 0</target_position>
+			<target_normal>0, 1, 0</target_normal>
+			<camera_position>0, 0, 0</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>64, 48</i_0_>
+				<i_1_>256, 48</i_1_>
+				<i_2_>256, 192</i_2_>
+				<i_3_>64, 192</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>320, 0</o_1_>
+				<o_2_>320, 240</o_2_>
+				<o_3_>0, 240</o_3_>
+			</output>
+		</mapping>
 	</Node_2>
 	<Node_3>
 		<Flow_Enabled>0</Flow_Enabled>
@@ -407,6 +479,30 @@
 			<o_2_>320, 240</o_2_>
 			<o_3_>0, 240</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 0, 0</target_position>
+			<target_normal>0, 1, 0</target_normal>
+			<camera_position>0, 0, 0</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>64, 48</i_0_>
+				<i_1_>256, 48</i_1_>
+				<i_2_>256, 192</i_2_>
+				<i_3_>64, 192</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>320, 0</o_1_>
+				<o_2_>320, 240</o_2_>
+				<o_3_>0, 240</o_3_>
+			</output>
+		</mapping>
 	</Node_3>
 	<Node_4>
 		<Flow_Enabled>0</Flow_Enabled>
@@ -495,6 +591,30 @@
 			<o_2_>320, 240</o_2_>
 			<o_3_>0, 240</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 0, 0</target_position>
+			<target_normal>0, 1, 0</target_normal>
+			<camera_position>0, 0, 0</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>64, 48</i_0_>
+				<i_1_>256, 48</i_1_>
+				<i_2_>256, 192</i_2_>
+				<i_3_>64, 192</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>320, 0</o_1_>
+				<o_2_>320, 240</o_2_>
+				<o_3_>0, 240</o_3_>
+			</output>
+		</mapping>
 	</Node_4>
 	<Node_5>
 		<Flow_Enabled>0</Flow_Enabled>
@@ -583,5 +703,29 @@
 			<o_2_>320, 240</o_2_>
 			<o_3_>0, 240</o_3_>
 		</output>
+	<device>
+			<device>0</device>
+			<canvas_size>720, 480</canvas_size>
+			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
+		</device>
+		<mapping>
+			<Flow_Enabled>0</Flow_Enabled>
+			<target_position>0, 0, 0</target_position>
+			<target_normal>0, 1, 0</target_normal>
+			<camera_position>0, 0, 0</camera_position>
+			<camera_normal>0, 1, 0</camera_normal>
+			<input>
+				<i_0_>64, 48</i_0_>
+				<i_1_>256, 48</i_1_>
+				<i_2_>256, 192</i_2_>
+				<i_3_>64, 192</i_3_>
+			</input>
+			<output>
+				<o_0_>0, 0</o_0_>
+				<o_1_>320, 0</o_1_>
+				<o_2_>320, 240</o_2_>
+				<o_3_>0, 240</o_3_>
+			</output>
+		</mapping>
 	</Node_5>
 </settings>

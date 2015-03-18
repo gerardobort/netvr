@@ -7,7 +7,7 @@
 
 #define M_PI 3.1415926535897932384626433832795
 
-#define INT_CORNERS_AMOUNT 5
+#define INT_CORNERS_AMOUNT 4
 
 #define INT_ROOM_WIDTH 800
 #define INT_ROOM_HEIGHT 200
@@ -36,7 +36,6 @@ class nvrNode {
     
         ofFbo bufferInput;
         ofFbo bufferOutput;
-        ofShader mappingShader;
 
         ofPoint inputCorners[INT_CORNERS_AMOUNT];
         ofPoint outputCorners[INT_CORNERS_AMOUNT];
@@ -63,7 +62,7 @@ class nvrNode {
         ofParameter<int> guipDeviceId;
 	    void setDeviceId(int& _value) { videoGrabber.setDeviceID(_value); videoGrabber.initGrabber(cameraWidth, cameraHeight); }
         ofParameter<ofVec2f> guipCanvasSize;
-	    void setCanvasSize(ofVec2f& _value) { cameraWidth = _value.x; cameraHeight = _value.y; }
+	    void setCanvasSize(ofVec2f& _value) { cameraWidth = (int)_value.x; cameraHeight = (int)_value.y; }
         ofParameter<bool>	guipFlipCamsHorizontally;
 
 	    ofParameterGroup	mappingParameters;

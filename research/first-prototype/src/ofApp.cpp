@@ -38,6 +38,9 @@ void ofApp::setup(){
     //model.loadModel("models/OBJ/spider.obj", true);
     //model.loadModel("models/Collada/duck.dae", true);
     model.loadModel("models/man/Man N070315.3DS", true);
+
+    mappingShader.load("shaders/mapping");
+
 }
 
 //--------------------------------------------------------------
@@ -99,6 +102,7 @@ void ofApp::drawProjections(){
 
 void ofApp::drawRoom(){
 
+    /*
     ofMesh room;
     room.addVertex(ofVec3f(0, 0, 0));
     room.addVertex(ofVec3f(0, 0, INT_ROOM_DEPTH));
@@ -113,6 +117,7 @@ void ofApp::drawRoom(){
     room.addTexCoord(ofVec2f(0, 0));
     room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, 0));
     room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
+    */
 
     ofMesh roomWireframe;
     roomWireframe.addVertex(ofVec3f(0, -10, 0));
@@ -146,15 +151,16 @@ void ofApp::drawRoom(){
 
     bufferRoom.begin();
         ofBackground(0);
+        ofEnableAlphaBlending();
         roomCamera.begin(ofRectangle(0, 0, 600, 400));
             ofEnableDepthTest();
             glShadeModel(GL_SMOOTH); 
             ofPushMatrix();
             ofTranslate(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0);
             bufferProjections.getTextureReference().bind();
-            roomMapping.begin();
-            room.drawFaces();
-            roomMapping.end();
+            //roomMapping.begin();
+            //room.drawFaces();
+            //roomMapping.end();
             bufferProjections.getTextureReference().unbind();
             roomWireframe.drawWireframe();
             glPointSize(4);
@@ -168,11 +174,61 @@ void ofApp::drawRoom(){
             model.setScale(0.5, -0.5, 0.5);
             ofPopMatrix();
             model.drawFaces();
-            ofDisableDepthTest();
 
 
             ofSpherePrimitive sphere;
-            for (int i= 0 ; i < INT_NODES_AMOUNT; i++) {
+            ofMesh cameraProjection;
+            cameraProjection.addVertex(ofVec3f(0, 0, 0));
+            cameraProjection.addVertex(ofVec3f(0, 0, INT_ROOM_DEPTH));
+            cameraProjection.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
+            cameraProjection.addVertex(ofVec3f(0, 0, 0));
+            cameraProjection.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, 0));
+            cameraProjection.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
+
+            cameraProjection.addTexCoord(ofVec2f(0, 0));
+            cameraProjection.addTexCoord(ofVec2f(0, INT_ROOM_DEPTH));
+            cameraProjection.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
+            cameraProjection.addTexCoord(ofVec2f(0, 0));
+            cameraProjection.addTexCoord(ofVec2f(INT_ROOM_WIDTH, 0));
+            cameraProjection.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
+            for (int i= 0 ; i < guipNodesAmount; i++) {
+
+                ofPushMatrix();
+                if (nodes[i]->guipShowFlow.get())
+                    nodes[i]->bufferFlow.getTextureReference().bind();
+                else
+                    nodes[i]->bufferOutput.getTextureReference().bind();
+
+
+                // + rotate plane
+                ofVec3f normal;
+                normal = nodes[i]->guipTargetNormal.get();
+                normal.normalize();  
+                float rotationAmount;  
+                ofVec3f rotationAngle;  
+                ofQuaternion rotation;  
+
+                ofVec3f axis(0, 1, 0);  
+                rotation.makeRotate(axis, normal);  
+                rotation.getRotate(rotationAmount, rotationAngle);  
+                // - rotate plane
+
+
+                ofTranslate(nodes[i]->guipTargetPosition.get());
+                ofRotate(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
+                ofTranslate(ofVec3f(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0));
+
+                ofPushStyle();
+                ofSetColor(0, 200, 200);
+                ofLine(ofVec3f(INT_ROOM_WIDTH/2.0, 0, INT_ROOM_DEPTH/2.0), ofVec3f(INT_ROOM_WIDTH/2.0, 0, INT_ROOM_DEPTH/2.0) + 60*ofVec3f(0,1,0));
+                ofPopStyle();
+
+
+                mappingShader.begin();
+                cameraProjection.draw();
+                mappingShader.end();
+                ofPopMatrix();
+
                 ofPushStyle();
                 ofSetColor(200, 0, 0);
                 sphere.setRadius(10);
@@ -191,7 +247,10 @@ void ofApp::drawRoom(){
                 ofPopStyle();
             }
 
+            ofDisableDepthTest();
+
         roomCamera.end();
+        ofDisableAlphaBlending();
     bufferRoom.end();
     bufferRoom.draw(0, 0);
 
