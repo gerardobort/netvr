@@ -88,8 +88,8 @@ class nvrNode {
 	    void setOutputCorners3(ofVec2f& _value) { outputCorners[3] = ofPoint(_value); }
 
         ofParameter<ofVec3f>	guipTargetPosition;
-        ofParameter<ofVec3f>	guipTargetNormal;
+        ofParameter<ofVec3f>	guipTargetRotation;
         ofParameter<ofVec3f>	guipCameraPosition;
-        ofParameter<ofVec3f>	guipCameraNormal;
+        ofParameter<ofVec3f>	guipCameraRotation;
 
 };

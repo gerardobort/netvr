@@ -12,7 +12,7 @@ void main()
 {
     vec4 color;
     color = texture(u_sampler2d, v_texCoord0);
-    if (length(color.rgb) > 0.5)
+    if (length(color.rgb) > 0.1)
         outputColor = vec4(color.rgb, 0.5);
     else
         outputColor = vec4(color.rgb, 0.1);

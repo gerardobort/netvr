@@ -33,7 +33,6 @@ class ofApp : public ofBaseApp{
         ofShader mappingShader;
 
         nvrNode *nodes[INT_NODES_AMOUNT];
-        ofFbo bufferProjections;
         ofFbo bufferRoom;
         ofEasyCam roomCamera;
         ofShader roomMapping;

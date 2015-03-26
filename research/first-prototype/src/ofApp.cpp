@@ -18,8 +18,7 @@ void ofApp::setup(){
 
     ofSetWindowTitle("netvr - prototype dashboard");
 
-    bufferProjections.allocate(INT_ROOM_WIDTH, INT_ROOM_DEPTH, GL_RGBA);
-    bufferRoom.allocate(600, 400, GL_RGBA);
+    bufferRoom.allocate(900, 400, GL_RGBA);
     roomMapping.load("shaders/mapping");
     roomCamera.setPosition(ofVec3f(0, INT_ROOM_HEIGHT, INT_ROOM_WIDTH+INT_ROOM_HEIGHT));
     roomCamera.setTarget(ofVec3f(0, INT_ROOM_HEIGHT/2.0, 0));
@@ -60,7 +59,6 @@ void ofApp::draw(){
     ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 
     drawCameras();
-    drawProjections();
     drawRoom();
     gui.draw();
     
@@ -82,42 +80,7 @@ void ofApp::drawCameras(){
     }
 }
 
-void ofApp::drawProjections(){
-    bufferProjections.begin();
-        ofEnableAlphaBlending();
-        ofEnableBlendMode(OF_BLENDMODE_ADD);
-        ofBackground(0);
-        for (int i= 0 ; i < guipNodesAmount; i++)
-            if (i == activeCamera - 1 || !activeCamera)
-                nodes[i]->bufferOutput.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
-        ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-        ofDisableAlphaBlending();
-    bufferProjections.end();
-    bufferProjections.draw(600, 0, 600, 400);
-
-    reportStream.str(""); reportStream.clear();
-    reportStream << "outputs projection" << endl;
-    ofDrawBitmapString(reportStream.str(), 600 +10, 0 +20);
-}
-
 void ofApp::drawRoom(){
-
-    /*
-    ofMesh room;
-    room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(0, 0, INT_ROOM_DEPTH));
-    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
-    room.addVertex(ofVec3f(0, 0, 0));
-    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, 0));
-    room.addVertex(ofVec3f(INT_ROOM_WIDTH, 0, INT_ROOM_DEPTH));
-
-    room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(0, INT_ROOM_DEPTH));
-    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
-    room.addTexCoord(ofVec2f(0, 0));
-    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, 0));
-    room.addTexCoord(ofVec2f(INT_ROOM_WIDTH, INT_ROOM_DEPTH));
-    */
 
     ofMesh roomWireframe;
     roomWireframe.addVertex(ofVec3f(0, -10, 0));
@@ -152,16 +115,11 @@ void ofApp::drawRoom(){
     bufferRoom.begin();
         ofBackground(0);
         ofEnableAlphaBlending();
-        roomCamera.begin(ofRectangle(0, 0, 600, 400));
+        roomCamera.begin(ofRectangle(0, 0, 900, 400));
             ofEnableDepthTest();
             glShadeModel(GL_SMOOTH); 
             ofPushMatrix();
             ofTranslate(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0);
-            bufferProjections.getTextureReference().bind();
-            //roomMapping.begin();
-            //room.drawFaces();
-            //roomMapping.end();
-            bufferProjections.getTextureReference().unbind();
             roomWireframe.drawWireframe();
             glPointSize(4);
             roomWireframe.drawVertices();
@@ -199,23 +157,10 @@ void ofApp::drawRoom(){
                 else
                     nodes[i]->bufferOutput.getTextureReference().bind();
 
-
-                // + rotate plane
-                ofVec3f normal;
-                normal = nodes[i]->guipTargetNormal.get();
-                normal.normalize();  
-                float rotationAmount;  
-                ofVec3f rotationAngle;  
-                ofQuaternion rotation;  
-
-                ofVec3f axis(0, 1, 0);  
-                rotation.makeRotate(axis, normal);  
-                rotation.getRotate(rotationAmount, rotationAngle);  
-                // - rotate plane
-
-
                 ofTranslate(nodes[i]->guipTargetPosition.get());
-                ofRotate(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
+                ofRotateX(nodes[i]->guipTargetRotation.get().x);
+                ofRotateY(nodes[i]->guipTargetRotation.get().y);
+                ofRotateZ(nodes[i]->guipTargetRotation.get().z);
                 ofTranslate(ofVec3f(-INT_ROOM_WIDTH/2.0, 0, -INT_ROOM_DEPTH/2.0));
 
                 ofPushStyle();
@@ -302,7 +247,7 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::setupGui() {
 	
-	gui.setup("settings");
+	gui.setup("settings", "settings.xml", 920 + 10, 10);
 	gui.setDefaultBackgroundColor(ofColor(0, 0, 0, 127));
 	gui.setDefaultFillColor(ofColor(160, 160, 160, 160));
 	
