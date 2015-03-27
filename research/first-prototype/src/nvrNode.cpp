@@ -151,15 +151,35 @@ void nvrNode::drawOpticalFlow(){
         fluid.addTemperature(velocityMask.getLuminanceMask());
         fluid.update();
     }
-    //velocityField.setSource(opticalFlow.getOpticalFlowDecay());
     velocityField.setSource(fluid.getVelocity());
     ofEnableAlphaBlending();
     bufferFlow.begin();
         ofClear(0, 0, 0, 0);
         ofSetBackgroundColor(255, 0, 0, 0);
         ofEnableBlendMode(OF_BLENDMODE_ADD);
+
+        /*
+        // BEGIN modify field buffer
+        ofPixels pix;
+        fluid.getVelocity().readToPixels(pix);
+        // put some stuff in the pixels
+        int i = 0;
+        while( i < pix.size()) {
+            char c = pix[i];
+            //pix[i] = 255;
+            //pix[i+1] = 0;
+            //pix[i+2] = 0;
+            pix[i+3] = 255;
+            i+=4;
+        }
+        ofLog(OF_LOG_NOTICE, "pix size: " + ofToString(pix.size()));
+        fluid.getVelocity().loadData(pix);
+        // END modify field buffer
+        fluid.getVelocity().draw(0, 0, cameraWidth, cameraHeight);
+        */
+
         velocityField.draw(0, 0, cameraWidth, cameraHeight);
-        //velocityMask.draw(0, 0, INT_ROOM_WIDTH, INT_ROOM_DEPTH);
+
         ofDisableBlendMode();
     bufferFlow.end();
     bufferFlow.draw(drawX, drawY + 2.0*drawHeight/3.0, drawWidth, 2.0*drawHeight/3.0);

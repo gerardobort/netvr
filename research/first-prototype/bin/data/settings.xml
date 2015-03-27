@@ -84,7 +84,7 @@
 			<offset>3</offset>
 			<labda>0.0573095</labda>
 			<treshold>0.0157018</treshold>
-			<inverse_x>1</inverse_x>
+			<inverse_x>0</inverse_x>
 			<inverse_y>0</inverse_y>
 			<do_time_blur>0</do_time_blur>
 			<time_blur>
@@ -149,7 +149,7 @@
 			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
 		</device>
 		<mapping>
-			<Flow_Enabled>0</Flow_Enabled>
+			<Flow_Enabled>1</Flow_Enabled>
 			<target_position>-347.481, 179.257, -200</target_position>
 			<target_normal>-0.00935835, -0.742471, 0.638756</target_normal>
 			<camera_position>0, 90.0084, 200</camera_position>
@@ -263,7 +263,7 @@
 			<Flip_Cams_Horizontally>0</Flip_Cams_Horizontally>
 		</device>
 		<mapping>
-			<Flow_Enabled>0</Flow_Enabled>
+			<Flow_Enabled>1</Flow_Enabled>
 			<target_position>264.509, 172.882, -200</target_position>
 			<target_normal>0.0437658, 1, 0.723755</target_normal>
 			<camera_position>0, 83.6335, 200</camera_position>

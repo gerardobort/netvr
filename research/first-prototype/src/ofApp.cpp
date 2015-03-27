@@ -190,6 +190,26 @@ void ofApp::drawRoom(){
                 ofSetColor(0, 0, 200);
                 ofLine(nodes[i]->guipCameraPosition, nodes[i]->guipTargetPosition);
                 ofPopStyle();
+
+
+
+                ofTexture tex = nodes[i]->fluid.getVelocity();;
+                ofMesh flowMesh;
+                ofPixels pix;
+                tex.readToPixels(pix);
+                // put some stuff in the pixels
+                int j = 0, x = 0, y = 0, w = tex.getWidth(), h = tex.getHeight();
+                for (x = 0; x < w; x++) {
+                    for (y = 0; y < h; y++) {
+                        j = (y*w + x)*4;
+                        flowMesh.addVertex(ofVec3f(x*10.0 - INT_ROOM_WIDTH, pix[j]*0.4 - pix[j+1]*0.4, y*10.0 - INT_ROOM_DEPTH));
+                        flowMesh.addColor(ofColor(pix[j], pix[j+1], 0));
+                    }
+                }
+                ofLog(OF_LOG_NOTICE, "pix size: " + ofToString(pix.size()));
+                glPointSize(1);
+                flowMesh.drawVertices();
+
             }
 
             ofDisableDepthTest();
